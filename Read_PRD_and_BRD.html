@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapido Bikepool & Intercity Ride-Share — Interactive BRD & PRD Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #F7C900;
+      --primary-hover: #E5B800;
+      --dark: #0F172A;
+      --slate: #1E293B;
+      --slate-light: #334155;
+      --text-muted: #64748B;
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --accent-green: #10B981;
+      --accent-blue: #3B82F6;
+      --accent-purple: #8B5CF6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--slate);
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--dark);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      background: var(--primary);
+      color: #000;
+      font-weight: 900;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFF;
+    }
+
+    /* Document Tabs */
+    .tab-switcher {
+      display: flex;
+      background: #1E293B;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px 80px;
+    }
+
+    /* Document Header Card */
+    .doc-hero {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 28px;
+      border-bottom: 4px solid var(--primary);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1);
+    }
+
+    .badge-pill {
+      background: rgba(247, 201, 0, 0.2);
+      color: var(--primary);
+      border: 1px solid rgba(247, 201, 0, 0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .doc-hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .doc-hero p {
+      font-size: 15px;
+      color: #94A3B8;
+    }
+
+    /* Content Cards */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    h2 {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--slate);
+      margin: 18px 0 8px 0;
+    }
+
+    p {
+      color: #334155;
+      font-size: 14.5px;
+      margin-bottom: 12px;
+      line-height: 1.65;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .callout-amber {
+      background: #FFFBEB;
+      border-left: 5px solid #F59E0B;
+      color: #92400E;
+    }
+
+    .callout-blue {
+      background: #EFF6FF;
+      border-left: 5px solid #3B82F6;
+      color: #1E40AF;
+    }
+
+    .callout-green {
+      background: #ECFDF5;
+      border-left: 5px solid #10B981;
+      color: #065F46;
+    }
+
+    .callout strong {
+      display: block;
+      font-size: 14.5px;
+      margin-bottom: 4px;
+    }
+
+    /* Feature Comparison Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .feature-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      background: #FFF;
+    }
+
+    .feature-box.featured {
+      border: 2px solid var(--primary);
+      background: #FFFEFA;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tag-city { background: #E0E7FF; color: #3730A3; }
+    .tag-highway { background: #EDE9FE; color: #5B21B6; }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    /* Mobile Wireframe Simulator */
+    .phone-frame {
+      max-width: 420px;
+      margin: 20px auto;
+      background: #000;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      border: 4px solid #334155;
+    }
+
+    .phone-screen {
+      background: #FFFFFF;
+      border-radius: 26px;
+      padding: 18px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .phone-header {
+      font-weight: 800;
+      font-size: 14px;
+      color: #0F172A;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #E2E8F0;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .input-mock {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .timer-circle {
+      background: #0F172A;
+      color: var(--primary);
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+      border: 4px solid var(--primary);
+      box-shadow: 0 0 15px rgba(247, 201, 0, 0.3);
+    }
+
+    .timer-time {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .timer-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: #000;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 12px;
+      box-shadow: 0 4px 10px rgba(247, 201, 0, 0.3);
+    }
+
+    /* Comparison Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #F1F5F9;
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP APP BAR -->
+  <div class="top-bar">
+    <div class="brand">
+      <span class="brand-logo">rapido</span>
+      <span class="brand-title">Product & Business Specs</span>
+    </div>
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="switchTab('brd')">📑 1. Read BRD</button>
+      <button class="tab-btn" onclick="switchTab('prd')">📱 2. Read PRD</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- TAB 1: BRD CONTENT -->
+    <div id="brd-tab" class="tab-content active">
+      
+      <div class="doc-hero">
+        <span class="badge-pill">Business Requirements Document</span>
+        <h1>Rapido Bikepool & Intercity Ride-Share</h1>
+        <p>Understanding the Market Gap, Casual Commuter Behavior, and 2 New Core Products</p>
+      </div>
+
+      <div class="section-card">
+        <h2>💡 1. The Real-World Discovery (The Market Gap)</h2>
+        <p><strong>What is happening right now?</strong></p>
+        <p>Across metropolitan cities, thousands of bike owners ride to work alone while paying ₹100+/L for petrol. To offset this monthly expense, many riders sign up on the <strong>Rapido Captain app</strong>. But they do not want to be full-time commercial taxi drivers—<strong>they just want to share their empty seat with someone traveling to the same office tech park and split the fuel cost.</strong></p>
+
+        <div class="callout callout-amber">
+          <strong>⚠️ The Core Problem Today</strong>
+          Because the current Captain app is made for commercial taxis, it assigns random rides in different directions. The commuter host has to cancel multiple rides, negotiate over phone calls, and face penalties. Meanwhile, passengers struggle with expensive ₹250+ auto surge fares during rush hour.
+        </div>
+
+        <div class="callout callout-green">
+          <strong>🚀 The Big Business Opportunity</strong>
+          Create a dedicated <strong>Peer-to-Peer Bikepooling service</strong> inside Rapido with two clear offerings:
+          <br>1. <strong>Host a Ride</strong> (For bike owners to share their seat on their route).
+          <br>2. <strong>Want to Share a Ride</strong> (For passengers to find and join matching hosts).
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>🏍️ 2. The Two New Host Features</h2>
+        
+        <div class="grid-2">
+          <div class="feature-box featured">
+            <span class="feature-tag tag-city">Feature 1: Inside the City</span>
+            <h3 style="margin-top:4px;">Daily Commute Pool (5 km &ndash; 30 km)</h3>
+            <ul>
+              <li><strong>Distance Range:</strong> 5 km to 30 km (Covers all daily office routes).</li>
+              <li><strong>Automatic Pricing:</strong> Rapido's algorithm automatically sets a fair fuel-split price. No bargaining.</li>
+              <li><strong>5-Minute Live Timer:</strong> Host lists the ride 5 mins before leaving. A 5-minute countdown runs while nearby passengers select the host.</li>
+            </ul>
+          </div>
+
+          <div class="feature-box featured">
+            <span class="feature-tag tag-highway">Feature 2: City to City</span>
+            <h3 style="margin-top:4px;">Highway Bike Sharing (Inter-City)</h3>
+            <ul>
+              <li><strong>Advance Scheduling:</strong> Host chooses starting city and destination city; schedules ride at least <strong>1 hour in advance</strong>.</li>
+              <li><strong>Host Sets Price:</strong> The rider chooses how much to charge their co-partner for sharing the long journey.</li>
+              <li><strong>Gear & Luggage Check:</strong> Host confirms spare helmet, backpack limit, and planned rest/food halts.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>👥 3. The Three User Personas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Persona</th>
+              <th>Who They Are</th>
+              <th>How They Use Rapido</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>👤 Passenger</strong></td>
+              <td>Daily commuter or traveler seeking a fast, affordable ride.</td>
+              <td>Enters pickup/destination, compares matching hosts by rating, bike, and price, and joins.</td>
+            </tr>
+            <tr>
+              <td><strong>🏍️ Inside-City Host</strong></td>
+              <td>Bike owner traveling 5&ndash;30 km to work.</td>
+              <td>Enters route, gets auto-generated fair price, starts 5-min timer, and picks up matching co-rider.</td>
+            </tr>
+            <tr>
+              <td><strong>🛣️ City-to-City Host</strong></td>
+              <td>Rider traveling between two cities.</td>
+              <td>Schedules trip &ge; 1 hr ahead, sets custom price, and accepts a co-traveler to split costs.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: PRD CONTENT -->
+    <div id="prd-tab" class="tab-content">
+      
+      <div class="doc-hero" style="background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%);">
+        <span class="badge-pill" style="background: rgba(139, 92, 246, 0.2); color: #C4B5FD; border-color: #8B5CF6;">Product Requirements Document</span>
+        <h1>Rapido Bikepool Screen Flows & Layouts</h1>
+        <p>Visual UI Layouts, Interactive Wireframes, and Feature Logic for All 3 Flows</p>
+      </div>
+
+      <!-- FLOW 1 -->
+      <div class="section-card">
+        <h2>📱 Flow 1: Passenger Experience ("Want to Share a Ride")</h2>
+        <p>The passenger enters their pickup and destination to instantly view verified hosts traveling on the exact same route.</p>
+
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <span>← Shared Rides Near You</span>
+              <span>Filter ⚙️</span>
+            </div>
+            
+            <div class="input-mock">📍 From: Indiranagar Metro Station</div>
+            <div class="input-mock">🎯 To: Manyata Tech Park (12 km)</div>
+
+            <div style="font-weight: 800; font-size: 11px; color: #64748B; margin: 12px 0 6px;">
+              HOSTS HEADING YOUR WAY (2 MATCHES)
+            </div>
+
+            <!-- Host Card 1 -->
+            <div style="border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #FFF;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight: 800; font-size: 13px;">Rahul Sharma ⭐ 4.9</span>
+                <span style="background: #DCFCE7; color: #166534; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Verified Commuter</span>
+              </div>
+              <div style="font-size: 11px; color: #64748B; margin: 3px 0;">Royal Enfield Hunter 350 · Spare Helmet: YES</div>
+              <div style="font-size: 11.5px; color: #0F172A; margin: 4px 0;">⏰ <strong>Leaving in 4 mins</strong> (2 min walk to pickup)</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px;">
+                <span style="font-size: 15px; font-weight: 900; color: #0F172A;">₹65 <small style="font-size:10px; color:#94A3B8; text-decoration:line-through;">₹180</small></span>
+                <span style="background: #F7C900; color: #000; font-weight: 800; font-size: 11px; padding: 6px 12px; border-radius: 6px;">Choose Rider</span>
+              </div>
+            </div>
+
+            <!-- Host Card 2 -->
+            <div style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; background: #F8FAFC;">
+              <div style="display:flex; justify-content:space-between;">
+                <span style="font-weight: 800; font-size: 13px;">Priya V. ⭐ 4.8</span>
+                <span style="background: #FCE7F3; color: #9D174D; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Women Match</span>
+              </div>
+              <div style="font-size: 11px; color: #64748B; margin: 3px 0;">TVS Jupiter · Spare Helmet: YES</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px;">
+                <span style="font-size: 15px; font-weight: 900; color: #0F172A;">₹60</span>
+                <span style="background: #0F172A; color: #FFF; font-weight: 800; font-size: 11px; padding: 6px 12px; border-radius: 6px;">Choose Rider</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FLOW 2 -->
+      <div class="section-card">
+        <h2>⏱️ Flow 2: Inside-City Host Experience (5 km – 30 km)</h2>
+        <p>The host lists their route, sees the automatic fair price, and starts the <strong>5-minute matching timer</strong>.</p>
+
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <span>Host Inside City Ride</span>
+              <span>Rule ℹ️</span>
+            </div>
+
+            <div class="input-mock">📍 Start: HSR Layout Sector 2</div>
+            <div class="input-mock">🎯 Drop: Manyata Tech Park (18.5 km)</div>
+            
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 11.5px; color: #065F46;">
+              ✓ Route Distance Valid (Between 5 km & 30 km)
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+              <div style="font-size: 11px; color: #64748B;">AUTOMATIC FARE BY RAPIDO</div>
+              <div style="font-size: 20px; font-weight: 900; color: #0F172A;">₹95.00 <span style="font-size: 12px; font-weight: 600; color: #10B981;">(Direct to Wallet)</span></div>
+            </div>
+
+            <!-- 5 MIN TIMER SIMULATION -->
+            <div class="timer-circle">
+              <span class="timer-time">04:32</span>
+              <span class="timer-lbl">Time to Match</span>
+            </div>
+            
+            <p style="text-align: center; font-size: 11px; color: #64748B; margin-top: 4px;">
+              Your ride is visible to co-riders along your path.
+            </p>
+
+            <div class="btn-action" style="background:#0F172A; color:#FFF;">
+              Cancel & Ride Solo (No Penalty)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLOW 3 -->
+      <div class="section-card">
+        <h2>🛣️ Flow 3: City-to-City Inter-City Host Setup</h2>
+        <p>The host schedules a long-distance trip $\ge 1\text{ hour}$ in advance and sets their own price.</p>
+
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <span>Host City-to-City Ride</span>
+              <span>Help ℹ️</span>
+            </div>
+
+            <div class="input-mock">🏙️ From: Bengaluru (Hebbal Flyover)</div>
+            <div class="input-mock">📍 To City: Mysuru (Bus Stand) · 140 km</div>
+
+            <div style="margin: 12px 0;">
+              <label style="font-size: 11px; font-weight: 700; color: #64748B;">SCHEDULE (Min 1 Hour Ahead):</label>
+              <div class="input-mock" style="margin-top: 4px;">📅 Saturday, 18 Oct · ⏰ 07:00 AM</div>
+            </div>
+
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+              <label style="font-size: 11px; font-weight: 700; color: #92400E;">SET YOUR PRICE PER SEAT:</label>
+              <div style="font-size: 22px; font-weight: 900; color: #0F172A; margin: 4px 0;">₹ 350</div>
+              <input type="range" style="width: 100%; accent-color: #F7C900;" min="250" max="450" value="350">
+              <div style="display:flex; justify-content:space-between; font-size: 10px; color: #64748B;">
+                <span>Min ₹250</span>
+                <span>Suggested: ₹350</span>
+                <span>Max ₹450</span>
+              </div>
+            </div>
+
+            <div style="font-size: 11.5px; color: #334155; margin-bottom: 12px;">
+              <div>☑️ Extra Helmet Provided for Co-Partner</div>
+              <div>☑️ Max 1 Backpack (&lt; 7 kg)</div>
+              <div>☕ 1 Breakfast Stop at Maddur (20 mins)</div>
+            </div>
+
+            <div class="btn-action">
+              Publish City-to-City Trip 🚀
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      if (tabName === 'brd') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('brd-tab').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('prd-tab').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

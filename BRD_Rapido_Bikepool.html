@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rapido Commute & Highway - Business Requirements Document (BRD)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      line-height: 1.6;
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .cover-header {
+      border-bottom: 3px solid #ffdf00;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .brand-tag {
+      background: #0f172a;
+      color: #ffdf00;
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      font-weight: 500;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 2px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2 .section-num {
+      background: #ffdf00;
+      color: #000;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    h3 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #334155;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .callout {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 14px 0;
+      font-size: 13px;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout.info {
+      background: #eff6ff;
+      border-left-color: #3b82f6;
+    }
+
+    .callout.info .callout-title {
+      color: #1e40af;
+    }
+
+    .callout.success {
+      background: #f0fdf4;
+      border-left-color: #22c55e;
+    }
+
+    .callout.success .callout-title {
+      color: #166534;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px 0;
+      font-size: 12.5px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-yellow { background: #fef08a; color: #854d0e; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+
+    .card {
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #0f172a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .economics-box {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin: 14px 0;
+    }
+
+    .economics-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed #334155;
+    }
+
+    .economics-row.total {
+      border-top: 1.5px solid #ffdf00;
+      border-bottom: none;
+      font-weight: 700;
+      color: #ffdf00;
+      margin-top: 6px;
+      padding-top: 8px;
+    }
+
+    .page-break {
+      page-break-before: always;
+      padding-top: 10px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER HEADER -->
+  <div class="cover-header">
+    <div>
+      <span class="brand-tag">Rapido Strategic Product Initiative</span>
+      <h1>Business Requirements Document (BRD)</h1>
+      <div class="subtitle">Peer-to-Peer Bikepooling & Inter-City Highway Sharing Ecosystem</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 24px; font-weight: 900; color: #ffc400; background: #000; padding: 4px 12px; border-radius: 6px; display: inline-block;">rapido</div>
+    </div>
+  </div>
+
+  <!-- METADATA GRID -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <span class="meta-label">Document ID</span>
+      <span class="meta-value">BRD-MOB-2026-V1</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Author / Role</span>
+      <span class="meta-value">Senior Product Manager</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Target Audience</span>
+      <span class="meta-value">Execs, Ops, Legal, Eng</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Date of Release</span>
+      <span class="meta-value">August 14, 2026</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2><span class="section-num">01</span> Executive Summary & Problem Landscape</h2>
+  
+  <p>In high-density Tier-1 and Tier-2 Indian tech hubs (Bengaluru, Hyderabad, Pune, Delhi-NCR), thousands of private two-wheeler owners actively bypass the intent of the commercial Rapido Captain app. Rather than serving as on-demand gig taxi drivers, these riders register solely to <strong>offset daily commute fuel expenses (₹100+/L)</strong> by cherry-picking passengers heading to their same office tech parks.</p>
+
+  <div class="callout">
+    <div class="callout-title">⚠️ The Core Problem & Friction</div>
+    Because the commercial Captain app enforces random dispatching, strict acceptance rates, and commercial taxi obligations, casual commuters face account bans, route mismatches, and severe dissatisfaction. Concurrently, passengers face steep auto/cab fares (₹200–₹400) and peak-hour ride cancellations.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Commercial Bike Taxi (Status Quo) <span class="badge badge-yellow">Commercial</span></div>
+      <ul>
+        <li>Rider acts as full-time gig driver.</li>
+        <li>Route governed 100% by passenger drop.</li>
+        <li>Subject to commercial taxi licensing hurdles.</li>
+        <li>High acquisition & driver subsidy costs.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Peer-to-Peer Bikepool (Proposed) <span class="badge badge-green">P2P Commute</span></div>
+      <ul>
+        <li>Rider is a peer commuter sharing empty seat.</li>
+        <li>Route determined 100% by the Host.</li>
+        <li>Compliant with non-commercial cost-recovery.</li>
+        <li>Zero-CAC organic supply acquisition.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <h2><span class="section-num">02</span> Strategic Business Objectives & Core OKRs</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Strategic Pillar</th>
+        <th>Business Objective</th>
+        <th>Year 1 Target Key Result (OKR)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Supply Unlocking</strong></td>
+        <td>Onboard private white-plate commuter hosts without driver subsidies.</td>
+        <td><strong>150,000+</strong> active verified commuter hosts.</td>
+      </tr>
+      <tr>
+        <td><strong>Matching Efficiency</strong></td>
+        <td>Instant corridor discovery for intra-city commuters.</td>
+        <td><strong>&ge; 72%</strong> match rate within a 5-minute lead window.</td>
+      </tr>
+      <tr>
+        <td><strong>Zero-Detour Adherence</strong></td>
+        <td>Keep host route deviation strictly negligible.</td>
+        <td><strong>&le; 400 meters</strong> average detour to pickup point.</td>
+      </tr>
+      <tr>
+        <td><strong>Unit Profitability</strong></td>
+        <td>Sustain healthy gross margins with low CAC.</td>
+        <td><strong>14.5% &ndash; 16.0%</strong> platform take rate per seat.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- SECTION 3 -->
+  <h2><span class="section-num">03</span> Product Architecture & Scope Definition</h2>
+
+  <p>The proposed ecosystem introduces two distinct product offerings alongside a unified passenger discovery engine:</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">
+        <span>Product 1: Rapido Commute</span>
+        <span class="badge badge-blue">Intra-City</span>
+      </div>
+      <p style="font-size: 12px; margin-bottom: 8px;"><strong>Distance: 5 km to 30 km</strong> | Target: Daily Office Commuters</p>
+      <ul>
+        <li><strong>Automated Cost Split:</strong> Algorithmic fair-share pricing based on fuel cost recovery. No surge.</li>
+        <li><strong>5-Min Listing Lead & SLA:</strong> 5-minute countdown matching window; host waits or heads to corridor.</li>
+        <li><strong>Corridor Pickup Points:</strong> Snaps co-riders to main bus stops/metro gates on the host's route.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Product 2: Rapido Highway</span>
+        <span class="badge badge-purple">Inter-City</span>
+      </div>
+      <p style="font-size: 12px; margin-bottom: 8px;"><strong>Distance: 30 km to 350 km</strong> | Target: Weekend & Long-Haul</p>
+      <ul>
+        <li><strong>Advance Scheduling:</strong> Listed at least 1 hour in advance (up to 7 days ahead).</li>
+        <li><strong>Host-Set Price Slider:</strong> Host sets price per seat within platform regulatory price bands.</li>
+        <li><strong>Gear & Luggage Check:</strong> Explicit declaration of spare helmet, max 1 backpack, & planned rest halts.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">🔍 Passenger Corridor Discovery ("Find a Shared Ride")</div>
+    Passengers input origin and destination to view live and scheduled hosts along their corridor. The passenger compares hosts by corporate identity badges, vehicle model, trust rating, walking distance to pickup, and price before initiating a booking.
+  </div>
+
+  <!-- SECTION 4 -->
+  <h2><span class="section-num">04</span> Target Personas</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Persona</th>
+        <th>Profile & Typical Journey</th>
+        <th>Core Motivation</th>
+        <th>Platform Value Proposition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Persona 1: Intra-City Host</strong></td>
+        <td>Rahul (27), Senior Dev at Manyata Tech Park. Commutes 18 km each way from HSR Layout.</td>
+        <td>Wants to offset ₹4,500 monthly fuel expense without taking commercial detour rides.</td>
+        <td>One-tap ride listing 5 mins prior to departure, zero detours, automated UPI wallet credit.</td>
+      </tr>
+      <tr>
+        <td><strong>Persona 2: Inter-City Host</strong></td>
+        <td>Aniket (25), Product Designer traveling Pune &harr; Mumbai (150 km) on weekends.</td>
+        <td>High highway fuel & toll costs; wants companion & cost sharing on long rides.</td>
+        <td>Post trips 2-3 days ahead, set fair seat rate, filter verified co-riders, set luggage limits.</td>
+      </tr>
+      <tr>
+        <td><strong>Persona 3: Co-Rider Passenger</strong></td>
+        <td>Priya (23), Analyst traveling Indiranagar to Bellandur during peak office hours.</td>
+        <td>Frustrated by ₹250+ auto surge fares and frequent cab cancellations.</td>
+        <td>Guaranteed seat with verified corporate co-rider at 50% lower price than commercial taxis.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 5 -->
+  <h2><span class="section-num">05</span> Regulatory, Trust & Safety Framework</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">1. Legal & Regulatory Moat</div>
+      <ul>
+        <li><strong>White-Plate Compliance:</strong> Enforces max 2 hosted rides/day per commuter to align with MoRTH non-commercial cost-sharing guidelines.</li>
+        <li><strong>Non-Surge Cost Recovery:</strong> Algorithmic rate caps prevent commercial profiteering.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">2. Trust & Safety Shield</div>
+      <ul>
+        <li><strong>Corporate Auth:</strong> Work email (@company.com) & DigiLocker verification badge.</li>
+        <li><strong>Rapido Pink Pool:</strong> Women-only matching toggle for female riders and hosts.</li>
+        <li><strong>Dual-Helmet Check:</strong> ISI helmet confirmation before starting trip.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK -->
+  <div class="page-break"></div>
+
+  <!-- SECTION 6 -->
+  <h2><span class="section-num">06</span> Financial Model & Unit Economics</h2>
+
+  <p>The unit economics rely on high-velocity organic matching without continuous driver subsidy burn:</p>
+
+  <div class="grid-2">
+    <div class="economics-box">
+      <div style="font-weight: 700; color: #ffdf00; margin-bottom: 8px; font-size: 13px;">INTRA-CITY COMMUTE (15 KM)</div>
+      <div class="economics-row"><span>Passenger Price:</span><span>₹85.00</span></div>
+      <div class="economics-row"><span>Host Fuel Share:</span><span>₹72.00</span></div>
+      <div class="economics-row"><span>Platform Fee (13.5%):</span><span>₹11.50</span></div>
+      <div class="economics-row"><span>Micro-Insurance:</span><span>₹1.50</span></div>
+      <div class="economics-row total"><span>NET RAPIDO MARGIN:</span><span>₹11.50 / seat</span></div>
+    </div>
+
+    <div class="economics-box">
+      <div style="font-weight: 700; color: #ffdf00; margin-bottom: 8px; font-size: 13px;">INTER-CITY HIGHWAY (150 KM)</div>
+      <div class="economics-row"><span>Passenger Price:</span><span>₹420.00</span></div>
+      <div class="economics-row"><span>Host Fuel Share:</span><span>₹360.00</span></div>
+      <div class="economics-row"><span>Platform Fee (13.1%):</span><span>₹55.00</span></div>
+      <div class="economics-row"><span>Safety & Insurance:</span><span>₹5.00</span></div>
+      <div class="economics-row total"><span>NET RAPIDO MARGIN:</span><span>₹50.00 / seat</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <h2><span class="section-num">07</span> Business Risk & Mitigation Strategy</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Risk Factor</th>
+        <th>Severity</th>
+        <th>Mitigation Plan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Taxi Union & Regulatory Scrutiny</strong></td>
+        <td><span class="badge badge-yellow">High</span></td>
+        <td>Strictly cap daily rides at 2/day and enforce cost-recovery math to stay firmly within legal peer-to-peer carpooling frameworks.</td>
+      </tr>
+      <tr>
+        <td><strong>Host No-Shows / Late Dropouts</strong></td>
+        <td><span class="badge badge-blue">Medium</span></td>
+        <td>Implement a Host Reliability Index. Dropping confirmed co-riders within 10 mins incurs platform penalty and temporary freeze.</td>
+      </tr>
+      <tr>
+        <td><strong>Off-Corridor Detour Arguments</strong></td>
+        <td><span class="badge badge-green">Low</span></td>
+        <td>App mandates fixed "Corridor Pickup Landmarks" (bus stops, metro gates). Passengers must walk to the host's route.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 8 -->
+  <h2><span class="section-num">08</span> Phased Go-To-Market Roadmap</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Phase</th>
+        <th>Timeline</th>
+        <th>Core Milestone</th>
+        <th>Primary Goal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1: IT Corridor Pilot</strong></td>
+        <td>Weeks 1 &ndash; 6</td>
+        <td>Launch in Outer Ring Road & Electronic City, Bengaluru</td>
+        <td>10,000 corporate rides; &ge;65% match rate</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2: Metro Rollout</strong></td>
+        <td>Weeks 7 &ndash; 14</td>
+        <td>Expand Intra-City to Hyderabad, Pune, Delhi-NCR</td>
+        <td>75,000 weekly pooled rides</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3: Highway Expansion</strong></td>
+        <td>Weeks 15 &ndash; 22</td>
+        <td>Activate top 15 intercity routes (Blr-Mysore, Pune-Mum)</td>
+        <td>2,500 weekend highway trips</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4: Enterprise Pass</strong></td>
+        <td>Weeks 23+</td>
+        <td>Direct B2B enterprise tech park partnerships</td>
+        <td>Automated payroll subsidies & ESG credits</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Rapido Confidential &bull; Business Requirements Document (BRD)</span>
+    <span>Page 1 of 1 &bull; Document Version 1.0</span>
+  </div>
+
+</body>
+</html>

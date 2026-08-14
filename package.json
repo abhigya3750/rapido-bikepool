@@ -1,0 +1,19 @@
+{
+  "name": "rapido-bikepool-highway",
+  "version": "1.0.0",
+  "description": "Rapido Bikepool & Intercity RideShare Web Application, BRD & PRD",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 3000"
+  },
+  "keywords": [
+    "rapido",
+    "bikepool",
+    "rideshare",
+    "mobility",
+    "commute",
+    "intercity"
+  ],
+  "author": "Rapido Product Team",
+  "license": "MIT"
+}
