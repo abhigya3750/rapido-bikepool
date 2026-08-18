@@ -5,20 +5,30 @@ let pickupMarker;
 let dropMarker;
 let routePolyline;
 let movingBikeMarker;
+
 let countdownInterval = null;
 let tripTimerInterval = null;
+let hostTripTimerInterval = null;
+let speedSimInterval = null;
+let hostSpeedSimInterval = null;
+
 let tripLiveSeconds = 0;
+let hostLiveSeconds = 0;
 let selectedPayment = 'Cash';
 let currentFare = 43;
 let currentDistKm = 8.2;
 let selectedRating = 5;
+let hostSelectedRating = 5;
+let pendingHostBookingIndex = 1;
+let currentRouteType = 'city'; // 'city' (<=30km) or 'highway' (>30km)
 
 // Navigation Stack for smooth back transitions
 let navigationStack = ['sheet-home'];
 
-// Default Coordinates: Indore (from user's screenshots)
+// Coordinates
 const defaultPickup = [22.7533, 75.8937]; // Sector R, Mahalaxmi Nagar
 const defaultDrop = [22.7441, 75.8821];   // Scheme No 54, Savitri Empire
+const highwayDrop = [23.2599, 77.4126];   // Bhopal
 
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
@@ -49,7 +59,7 @@ function drawRoute(pickupCoord, dropCoord) {
   if (routePolyline) map.removeLayer(routePolyline);
   if (movingBikeMarker) map.removeLayer(movingBikeMarker);
 
-  // Green "Pickup Point" Speech Bubble Marker (Screenshot 5)
+  // Green "Pickup Point" Speech Bubble Marker
   const pickupHtml = `
     <div class="custom-pickup-bubble">Pickup Point</div>
     <div style="width:14px; height:14px; background:#00875A; border:3px solid #FFF; border-radius:50%; margin:4px auto 0 auto; box-shadow:0 0 10px rgba(0,135,90,0.5);"></div>
@@ -74,12 +84,12 @@ function drawRoute(pickupCoord, dropCoord) {
   });
   dropMarker = L.marker(dropCoord, { icon: dropIcon }).addTo(map);
 
-  const midLat = (pickupCoord[0] + dropCoord[0]) / 2 + 0.003;
-  const midLng = (pickupCoord[1] + dropCoord[1]) / 2 - 0.003;
+  const midLat = (pickupCoord[0] + dropCoord[0]) / 2 + (currentRouteType === 'highway' ? 0.05 : 0.003);
+  const midLng = (pickupCoord[1] + dropCoord[1]) / 2 - (currentRouteType === 'highway' ? 0.05 : 0.003);
   const routePoints = [pickupCoord, [midLat, midLng], dropCoord];
 
   routePolyline = L.polyline(routePoints, {
-    color: '#0F172A',
+    color: currentRouteType === 'highway' ? '#7C3AED' : '#0F172A',
     weight: 4.5,
     opacity: 0.85,
     dashArray: '8, 4'
@@ -107,7 +117,7 @@ function navigateTo(sheetId) {
     target.style.display = 'block';
     navigationStack.push(sheetId);
     
-    // Toggle floating back button (hidden on Home)
+    // Toggle floating back button
     document.getElementById('map-back-btn').style.display = 
       (sheetId === 'sheet-home') ? 'none' : 'flex';
   }
@@ -132,11 +142,17 @@ function handleMapBack() {
 function goHome() {
   if (countdownInterval) clearInterval(countdownInterval);
   if (tripTimerInterval) clearInterval(tripTimerInterval);
+  if (hostTripTimerInterval) clearInterval(hostTripTimerInterval);
+  if (speedSimInterval) clearInterval(speedSimInterval);
+  if (hostSpeedSimInterval) clearInterval(hostSpeedSimInterval);
+
   hideAllSheets();
   navigationStack = ['sheet-home'];
   const homeSheet = document.getElementById('sheet-home');
   if (homeSheet) homeSheet.style.display = 'block';
   document.getElementById('map-back-btn').style.display = 'none';
+
+  setPassengerRouteType('city');
   recenterMap();
 }
 
@@ -146,39 +162,48 @@ function hideAllSheets() {
 }
 
 // ========================================================
-// 3. HOME SCREEN ACTIONS
+// 3. PASSENGER FLOW: UNIFIED CITY & HIGHWAY RIDESHARE
 // ========================================================
 
 function startShareRideFlow() {
   navigateTo('sheet-passenger-search');
 }
 
-function openHostModeSelector() {
-  navigateTo('sheet-host-mode-picker');
-}
+function setPassengerRouteType(type) {
+  currentRouteType = type;
+  const pills = document.querySelectorAll('.switch-pill');
+  pills.forEach(p => p.classList.remove('active'));
 
-function startHostInsideCityFlow() {
-  // Reset previous calculation state so price is not shown prematurely
-  document.getElementById('host-calc-trigger-section').style.display = 'block';
-  document.getElementById('host-calculated-fare-section').style.display = 'none';
-  navigateTo('sheet-host-city-setup');
-}
-
-function startHostCityToCityFlow() {
-  calculateIntercityDistance();
-  navigateTo('sheet-host-intercity-setup');
+  if (type === 'city') {
+    if (pills[0]) pills[0].classList.add('active');
+    document.getElementById('passenger-pickup-input').value = "722, Sector R, Mahalaxmi Nagar, Indore";
+    document.getElementById('passenger-drop-input').value = "Savitri Empire, Scheme No 54, Indore";
+    document.getElementById('search-mode-tag').innerText = "Inside City (8.2 km)";
+    document.getElementById('search-mode-tag').className = "badge-tag green";
+    currentDistKm = 8.2;
+    drawRoute(defaultPickup, defaultDrop);
+  } else {
+    if (pills[1]) pills[1].classList.add('active');
+    document.getElementById('passenger-pickup-input').value = "Indore (Vijay Nagar Square Hub)";
+    document.getElementById('passenger-drop-input').value = "Bhopal (ISBT Bus Terminal)";
+    document.getElementById('search-mode-tag').innerText = "Highway (>30 km)";
+    document.getElementById('search-mode-tag').className = "badge-tag purple";
+    currentDistKm = 195.0;
+    drawRoute(defaultPickup, highwayDrop);
+  }
 }
 
 function quickSelectRoute(title, pickup, drop, distKm) {
   document.getElementById('passenger-pickup-input').value = pickup;
   document.getElementById('passenger-drop-input').value = drop;
   currentDistKm = distKm;
+  if (distKm > 30) {
+    setPassengerRouteType('highway');
+  } else {
+    setPassengerRouteType('city');
+  }
   startShareRideFlow();
 }
-
-// ========================================================
-// 4. PASSENGER FLOW: SHARE A RIDE
-// ========================================================
 
 function goToPassengerPickupCheck() {
   const pickup = document.getElementById('passenger-pickup-input').value;
@@ -190,18 +215,199 @@ function goToPassengerPickupCheck() {
 }
 
 function confirmPickupAndDiscoverHosts() {
-  // Calculate dynamic fares for the corridor
-  const baseFuelFare = Math.round(15 + (currentDistKm * 3.4));
-  currentFare = baseFuelFare;
+  // Render matching hosts dynamically based on City (<=30km) vs Highway (>30km)
+  renderMatchingHostsList();
+  navigateTo('sheet-passenger-discovery');
+}
+
+function renderMatchingHostsList() {
+  const listContainer = document.getElementById('host-cards-list');
   
-  document.getElementById('pax-card-price-1').innerText = `₹${currentFare}`;
-  document.getElementById('pax-card-price-2').innerText = `₹${currentFare - 3}`;
+  if (currentDistKm <= 30) {
+    // INSIDE CITY COMMUTE (5-30 km)
+    currentFare = 43;
+    document.getElementById('discovery-title').innerText = "Hosts Heading Your Way";
+    document.getElementById('discovery-corridor-summary').innerText = `Calculated for ${currentDistKm} km daily commute`;
+    document.getElementById('waiting-service-type-name').innerText = "Bikepool Commute";
+
+    listContainer.innerHTML = `
+      <!-- Host Card 1 -->
+      <div class="host-card" onclick="selectHostCard(1)">
+        <div class="host-card-top">
+          <div class="host-profile-left">
+            <div class="host-avatar">RS</div>
+            <div>
+              <div class="host-name-row">
+                <span class="host-name">Rahul Sharma</span>
+                <span class="host-rating">⭐ 4.9 (48)</span>
+              </div>
+              <div class="host-badge-row">
+                <span class="trust-badge corporate">Verified Infosys</span>
+                <span class="trust-badge helmet">Extra Helmet</span>
+              </div>
+            </div>
+          </div>
+          <div class="host-price-right" onclick="openFareBreakdown(event)">
+            <div class="host-price">₹43</div>
+            <div class="host-old-price">₹140 on Taxi ℹ️</div>
+          </div>
+        </div>
+        
+        <div class="host-meta-row">
+          <span>🏍️ Royal Enfield Hunter 350 (Blue)</span>
+          <span>⏰ <strong>Leaving in 4 mins</strong></span>
+        </div>
+
+        <div class="host-pickup-notice">
+          📍 Pickup: <strong>Main Road Bus Stop</strong> (120m walk · 2 mins)
+        </div>
+
+        <div class="card-actions-row">
+          <button class="view-reviews-btn" onclick="openHostReviewsModal('Rahul Sharma', '4.9', '48', 'Royal Enfield Hunter 350', 'Verified Infosys Commuter', event)">
+            👤 View Profile & Reviews
+          </button>
+          <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(1, event)">
+            Choose Rider · ₹43
+          </button>
+        </div>
+      </div>
+
+      <!-- Host Card 2 -->
+      <div class="host-card" onclick="selectHostCard(2)">
+        <div class="host-card-top">
+          <div class="host-profile-left">
+            <div class="host-avatar" style="background:#8B5CF6;">PV</div>
+            <div>
+              <div class="host-name-row">
+                <span class="host-name">Priya Verma</span>
+                <span class="host-rating">⭐ 4.8 (32)</span>
+              </div>
+              <div class="host-badge-row">
+                <span class="trust-badge pink">Women Match</span>
+                <span class="trust-badge helmet">Extra Helmet</span>
+              </div>
+            </div>
+          </div>
+          <div class="host-price-right" onclick="openFareBreakdown(event)">
+            <div class="host-price">₹40</div>
+            <div class="host-old-price">₹140 on Taxi ℹ️</div>
+          </div>
+        </div>
+        
+        <div class="host-meta-row">
+          <span>🛵 TVS Jupiter 125 (Grey)</span>
+          <span>⏰ <strong>Leaving in 8 mins</strong></span>
+        </div>
+
+        <div class="host-pickup-notice">
+          📍 Pickup: <strong>Sector R Gate</strong> (80m walk)
+        </div>
+
+        <div class="card-actions-row">
+          <button class="view-reviews-btn" onclick="openHostReviewsModal('Priya Verma', '4.8', '32', 'TVS Jupiter 125', 'Verified Commuter · Pink Pool', event)">
+            👤 View Profile & Reviews
+          </button>
+          <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(2, event)">
+            Choose Rider · ₹40
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    // HIGHWAY INTERCITY (>30 km)
+    currentFare = 360;
+    document.getElementById('discovery-title').innerText = "Highway Rides to Bhopal";
+    document.getElementById('discovery-corridor-summary').innerText = `Calculated for ${currentDistKm} km Highway Corridor`;
+    document.getElementById('waiting-service-type-name').innerText = "Highway Intercity RideShare";
+
+    listContainer.innerHTML = `
+      <!-- Highway Host 1 -->
+      <div class="host-card" onclick="selectHostCard(1)">
+        <div class="host-card-top">
+          <div class="host-profile-left">
+            <div class="host-avatar" style="background:#7C3AED;">RS</div>
+            <div>
+              <div class="host-name-row">
+                <span class="host-name">Rahul Sharma</span>
+                <span class="host-rating">⭐ 4.9 (48)</span>
+              </div>
+              <div class="host-badge-row">
+                <span class="trust-badge corporate">Verified Infosys</span>
+                <span class="trust-badge highway">Highway Certified</span>
+              </div>
+            </div>
+          </div>
+          <div class="host-price-right" onclick="openFareBreakdown(event)">
+            <div class="host-price">₹360</div>
+            <div class="host-old-price">₹2,800 on Cab ℹ️</div>
+          </div>
+        </div>
+        
+        <div class="host-meta-row">
+          <span>🏍️ Royal Enfield Himalayan 450</span>
+          <span>📅 <strong>Tomorrow · 07:30 AM</strong></span>
+        </div>
+
+        <div class="host-pickup-notice">
+          📍 Pickup: <strong>Vijay Nagar Bypass Hub</strong> · ☕ 1 Rest Stop (Food Court)
+        </div>
+
+        <div class="card-actions-row">
+          <button class="view-reviews-btn" onclick="openHostReviewsModal('Rahul Sharma', '4.9', '48', 'Royal Enfield Himalayan 450', 'Verified Highway Host', event)">
+            👤 View Profile & Reviews
+          </button>
+          <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(1, event)">
+            Book Highway Seat · ₹360
+          </button>
+        </div>
+      </div>
+
+      <!-- Highway Host 2 -->
+      <div class="host-card" onclick="selectHostCard(2)">
+        <div class="host-card-top">
+          <div class="host-profile-left">
+            <div class="host-avatar" style="background:#0284C7;">AK</div>
+            <div>
+              <div class="host-name-row">
+                <span class="host-name">Amit Kulkarni</span>
+                <span class="host-rating">⭐ 4.8 (29)</span>
+              </div>
+              <div class="host-badge-row">
+                <span class="trust-badge corporate">Verified Wipro</span>
+                <span class="trust-badge helmet">ISI Helmet</span>
+              </div>
+            </div>
+          </div>
+          <div class="host-price-right" onclick="openFareBreakdown(event)">
+            <div class="host-price">₹380</div>
+            <div class="host-old-price">₹2,800 on Cab ℹ️</div>
+          </div>
+        </div>
+        
+        <div class="host-meta-row">
+          <span>🏍️ KTM Adventure 390</span>
+          <span>📅 <strong>Tomorrow · 08:15 AM</strong></span>
+        </div>
+
+        <div class="host-pickup-notice">
+          📍 Pickup: <strong>Radisson Square Bypass</strong> · 🎒 Max 1 Backpack
+        </div>
+
+        <div class="card-actions-row">
+          <button class="view-reviews-btn" onclick="openHostReviewsModal('Amit Kulkarni', '4.8', '29', 'KTM Adventure 390', 'Verified Highway Host', event)">
+            👤 View Profile & Reviews
+          </button>
+          <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(2, event)">
+            Book Highway Seat · ₹380
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   document.getElementById('confirmed-fare-val').innerText = `₹${currentFare}`;
   document.getElementById('total-fare-num').innerText = `₹${currentFare}`;
   document.getElementById('payment-modal-fare').innerText = `₹${currentFare}`;
-  document.getElementById('discovery-corridor-summary').innerText = `Calculated for ${currentDistKm} km corridor`;
-
-  navigateTo('sheet-passenger-discovery');
 }
 
 function selectHostCard(index) {
@@ -210,32 +416,42 @@ function selectHostCard(index) {
   if (cards[index - 1]) cards[index - 1].classList.add('selected');
 }
 
-function bookHostRide(hostIndex, event) {
+function promptSafetyAndBookHost(hostIndex, event) {
   if (event) event.stopPropagation();
-  
+  pendingHostBookingIndex = hostIndex;
+  document.getElementById('modal-safety-check').style.display = 'flex';
+}
+
+function closeSafetyModal() {
+  document.getElementById('modal-safety-check').style.display = 'none';
+}
+
+function confirmSafetyAndProceedBooking() {
+  closeSafetyModal();
+  bookHostRide(pendingHostBookingIndex);
+}
+
+function bookHostRide(hostIndex) {
   navigateTo('sheet-passenger-waiting');
   document.getElementById('waiting-status-title').innerText = "Searching for below services...";
   document.getElementById('waiting-progress-bar').style.display = 'block';
   document.getElementById('display-start-otp').style.display = 'none';
+  document.getElementById('waiting-comm-actions').style.display = 'none';
 
-  // Simulate instant matching after 1.5 seconds
   setTimeout(() => {
-    document.getElementById('waiting-status-title').innerText = "Ride Confirmed! Rahul is arriving";
+    document.getElementById('waiting-status-title').innerText = "Ride Confirmed! Rahul is on the way";
     document.getElementById('waiting-progress-bar').style.display = 'none';
     document.getElementById('display-start-otp').style.display = 'block';
+    document.getElementById('waiting-comm-actions').style.display = 'flex';
   }, 1600);
 }
 
-// ========================================================
-// 4E. IN-TRIP LIVE NAVIGATION SCREEN
-// ========================================================
-
+// In-Trip Passenger Live Navigation
 function startLiveTripScreen() {
   navigateTo('sheet-in-trip');
   document.getElementById('in-trip-fare-due').innerText = `₹${currentFare}`;
   document.getElementById('in-trip-dist-rem').innerText = `${currentDistKm} km`;
 
-  // Start trip live timer
   tripLiveSeconds = 0;
   if (tripTimerInterval) clearInterval(tripTimerInterval);
   tripTimerInterval = setInterval(() => {
@@ -245,7 +461,12 @@ function startLiveTripScreen() {
     document.getElementById('trip-live-timer').innerText = `${m}:${s}`;
   }, 1000);
 
-  // Simulate motorcycle movement on map
+  if (speedSimInterval) clearInterval(speedSimInterval);
+  speedSimInterval = setInterval(() => {
+    const randomSpeed = Math.floor(Math.random() * (46 - 36 + 1)) + 36;
+    document.getElementById('in-trip-speed').innerText = `${randomSpeed} km/h`;
+  }, 2000);
+
   simulateBikeMovement();
 }
 
@@ -264,8 +485,9 @@ function simulateBikeMovement() {
   let step = 0;
   const moveInterval = setInterval(() => {
     step++;
-    const lat = startCoord[0] + (defaultPickup[0] - startCoord[0]) * (step / 20);
-    const lng = startCoord[1] + (defaultPickup[1] - startCoord[1]) * (step / 20);
+    const targetCoord = (currentRouteType === 'highway') ? highwayDrop : defaultDrop;
+    const lat = startCoord[0] + (targetCoord[0] - startCoord[0]) * (step / 20);
+    const lng = startCoord[1] + (targetCoord[1] - startCoord[1]) * (step / 20);
     movingBikeMarker.setLatLng([lat, lng]);
 
     if (step >= 20) {
@@ -274,24 +496,16 @@ function simulateBikeMovement() {
   }, 200);
 }
 
-function showLiveTrackingState() {
-  recenterMap();
-}
-
 function cancelPassengerRide() {
   if (confirm("Are you sure you want to cancel this ride?")) {
     goHome();
   }
 }
 
-// ========================================================
-// 4F. END RIDE & POST-TRIP REVIEW RATING SCREEN
-// ========================================================
-
 function completeAndEndTrip() {
   if (tripTimerInterval) clearInterval(tripTimerInterval);
+  if (speedSimInterval) clearInterval(speedSimInterval);
   
-  // Set Receipt Details
   document.getElementById('receipt-fuel-split').innerText = `₹${currentFare - 5}.00`;
   document.getElementById('receipt-total-fare').innerText = `₹${currentFare}.00`;
   document.getElementById('receipt-pay-method').innerText = selectedPayment;
@@ -321,34 +535,23 @@ function toggleCompliment(el) {
 }
 
 function submitReviewAndFinish() {
-  const comment = document.getElementById('review-comment-input').value;
   alert(`🌟 Thank you for your feedback!\n\nRating: ${selectedRating} Stars submitted for Rahul.\nYour review helps keep the Rapido Commute community safe & verified!`);
   goHome();
 }
 
 // ========================================================
-// 5. HOST REVIEWS & PROFILE MODAL
+// 4. COMPLETE HOST FLOW A: INSIDE THE CITY (5–30 KM)
 // ========================================================
 
-function openHostReviewsModal(name, rating, count, bike, badge, event) {
-  if (event) event.stopPropagation();
-
-  document.getElementById('modal-host-name').innerText = name;
-  document.getElementById('modal-host-rating').innerText = `⭐ ${rating} (${count} shared rides)`;
-  document.getElementById('modal-host-bike').innerText = bike;
-  document.getElementById('modal-host-badge').innerText = badge;
-  document.getElementById('modal-host-avatar').innerText = name.split(' ').map(n => n[0]).join('');
-
-  document.getElementById('modal-host-profile').style.display = 'flex';
+function openHostModeSelector() {
+  navigateTo('sheet-host-mode-picker');
 }
 
-function closeHostReviewsModal() {
-  document.getElementById('modal-host-profile').style.display = 'none';
+function startHostInsideCityFlow() {
+  document.getElementById('host-calc-trigger-section').style.display = 'block';
+  document.getElementById('host-calculated-fare-section').style.display = 'none';
+  navigateTo('sheet-host-city-setup');
 }
-
-// ========================================================
-// 6. HOST FLOW A: INSIDE THE CITY (5–30 KM)
-// ========================================================
 
 function calculateHostRouteAndFare() {
   const origin = document.getElementById('host-city-origin').value;
@@ -359,25 +562,11 @@ function calculateHostRouteAndFare() {
     return;
   }
 
-  // Simulated Distance calculation (8.2 km for Mahalaxmi -> Scheme 54)
   const distKm = 8.2;
-
-  // Validate 5 km to 30 km range
-  if (distKm < 5.0) {
-    alert("❌ Distance too short for commute pooling (Minimum 5 km required).");
-    return;
-  }
-  if (distKm > 30.0) {
-    alert("❌ Route exceeds 30 km. Please switch to City-to-City Highway mode.");
-    return;
-  }
-
-  // Calculate fare
   const fare = Math.round(15 + (distKm * 4.5));
   document.getElementById('host-fare-calc').innerText = `₹${fare}.00`;
   document.getElementById('host-distance-text').innerText = `Distance: ${distKm} km (Valid: 5 to 30 km Range)`;
 
-  // Reveal calculated fare section
   document.getElementById('host-calc-trigger-section').style.display = 'none';
   document.getElementById('host-calculated-fare-section').style.display = 'block';
 }
@@ -406,8 +595,8 @@ function startHost5MinCountdown() {
     const secs = String(totalSeconds % 60).padStart(2, '0');
     clockEl.innerText = `${mins}:${secs}`;
 
-    // Simulate match notification after 4 seconds
-    if (totalSeconds === 296) {
+    // Simulate match notification after 3 seconds
+    if (totalSeconds === 297) {
       alertBox.style.display = 'block';
     }
   }, 1000);
@@ -415,7 +604,75 @@ function startHost5MinCountdown() {
 
 function hostAcceptPassenger() {
   clearInterval(countdownInterval);
-  alert("🎉 Co-Rider Accepted!\n\nPassenger: Ananya K.\nPickup Point: Vijay Nagar Bus Stop\nStart OTP: 7842\n\nGPS Route Navigation Started!");
+  // Transition to Host Pickup Navigation Screen
+  navigateTo('sheet-host-pickup-nav');
+}
+
+function hostArrivedAtPickup() {
+  // Transition to OTP Verification Screen
+  navigateTo('sheet-host-otp-verify');
+}
+
+function hostVerifyOtpAndStartRide() {
+  const d1 = document.getElementById('otp-digit-1').value;
+  const d2 = document.getElementById('otp-digit-2').value;
+  const d3 = document.getElementById('otp-digit-3').value;
+  const d4 = document.getElementById('otp-digit-4').value;
+  const enteredOtp = `${d1}${d2}${d3}${d4}`;
+
+  if (enteredOtp === '7842') {
+    // Transition to Host Active In-Trip HUD
+    navigateTo('sheet-host-in-trip');
+    startHostInTripHUD();
+  } else {
+    alert("Invalid OTP! Hint: Passenger's OTP is 7842");
+  }
+}
+
+function startHostInTripHUD() {
+  hostLiveSeconds = 0;
+  if (hostTripTimerInterval) clearInterval(hostTripTimerInterval);
+  hostTripTimerInterval = setInterval(() => {
+    hostLiveSeconds++;
+    const m = String(Math.floor(hostLiveSeconds / 60)).padStart(2, '0');
+    const s = String(hostLiveSeconds % 60).padStart(2, '0');
+    document.getElementById('host-live-timer').innerText = `${m}:${s}`;
+  }, 1000);
+
+  if (hostSpeedSimInterval) clearInterval(hostSpeedSimInterval);
+  hostSpeedSimInterval = setInterval(() => {
+    const spd = Math.floor(Math.random() * (45 - 38 + 1)) + 38;
+    document.getElementById('host-speed-display').innerText = `${spd} km/h`;
+  }, 2000);
+
+  simulateBikeMovement();
+}
+
+function hostEndTripAndCollectEarnings() {
+  if (hostTripTimerInterval) clearInterval(hostTripTimerInterval);
+  if (hostSpeedSimInterval) clearInterval(hostSpeedSimInterval);
+  navigateTo('sheet-host-completed');
+}
+
+function setHostRating(stars) {
+  hostSelectedRating = stars;
+  const starEls = document.querySelectorAll('#host-star-container .star');
+  starEls.forEach((el, idx) => {
+    el.classList.toggle('active', idx < stars);
+  });
+
+  const labels = {
+    1: 'Needs Improvement (1/5)',
+    2: 'Fair (2/5)',
+    3: 'Good (3/5)',
+    4: 'Very Good (4/5)',
+    5: 'Great Co-Rider (5/5)'
+  };
+  document.getElementById('host-rating-label').innerText = labels[stars] || 'Great';
+}
+
+function submitHostReviewAndFinish() {
+  alert("🎉 Commute Completed!\n\n₹52.00 has been transferred to your Rapido Wallet. Thank you for making cities greener!");
   goHome();
 }
 
@@ -424,15 +681,22 @@ function cancelHost5MinTimer() {
   goHome();
 }
 
+function cancelHostPickup() {
+  if (confirm("Cancel passenger pickup and ride solo?")) {
+    goHome();
+  }
+}
+
 // ========================================================
-// 7. HOST FLOW B: CITY TO CITY (INTERCITY HIGHWAY)
+// 5. COMPLETE HOST FLOW B: CITY TO CITY (HIGHWAY)
 // ========================================================
 
+function startHostCityToCityFlow() {
+  calculateIntercityDistance();
+  navigateTo('sheet-host-intercity-setup');
+}
+
 function calculateIntercityDistance() {
-  const fromCity = document.getElementById('intercity-from-city').value;
-  const toCity = document.getElementById('intercity-to-city').value;
-  
-  // Calculate simulated distance and bounds
   const dist = 195; // Indore to Bhopal
   document.getElementById('intercity-distance-label').innerText = `Distance: ${dist} km`;
 
@@ -456,18 +720,108 @@ function updateIntercityPrice(val) {
 }
 
 function publishIntercityTrip() {
-  const fromCity = document.getElementById('intercity-from-city').value;
-  const toCity = document.getElementById('intercity-to-city').value;
   const price = document.getElementById('intercity-price-slider').value;
-  const date = document.getElementById('intercity-date').value;
-  const time = document.getElementById('intercity-time').value;
+  document.getElementById('intercity-dash-price').innerText = `₹${price} per seat`;
+  navigateTo('sheet-host-intercity-dashboard');
+}
 
-  alert(`🚀 Intercity Highway Trip Published!\n\nRoute: ${fromCity} ➔ ${toCity}\nDate: ${date} at ${time}\nPrice: ₹${price} per seat\n\nYour listing is now live for co-travelers heading between these cities!`);
+function acceptHighwayPassenger() {
+  alert("🎉 Co-Traveler Accepted!\n\nPassenger: Vikram Joshi\nPickup: Vijay Nagar Bypass Hub\nScheduled Departure: Tomorrow at 07:30 AM\n\nBooking voucher generated!");
   goHome();
 }
 
 // ========================================================
-// 8. PAYMENTS & OFFERS MODALS
+// 6. IN-APP CHAT SIMULATOR
+// ========================================================
+
+function openChatModal() {
+  document.getElementById('modal-chat').style.display = 'flex';
+}
+
+function closeChatModal() {
+  document.getElementById('modal-chat').style.display = 'none';
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chat-text-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendChatBubble(text, 'outgoing');
+  input.value = '';
+
+  setTimeout(() => {
+    appendChatBubble('Got it! See you in 1 min at the spot 👍', 'incoming');
+  }, 1200);
+}
+
+function sendQuickChatMessage(text) {
+  appendChatBubble(text, 'outgoing');
+  setTimeout(() => {
+    appendChatBubble('Noted! Turning near the corner now 👍', 'incoming');
+  }, 1000);
+}
+
+function appendChatBubble(text, type) {
+  const container = document.getElementById('chat-messages-box');
+  const bubble = document.createElement('div');
+  bubble.className = `chat-bubble ${type}`;
+  bubble.innerHTML = `<span>${text}</span><span class="bubble-time">Just now</span>`;
+  container.appendChild(bubble);
+  container.scrollTop = container.scrollHeight;
+}
+
+function handleChatEnter(e) {
+  if (e.key === 'Enter') {
+    sendChatMessage();
+  }
+}
+
+// ========================================================
+// 7. FARE BREAKDOWN MODAL
+// ========================================================
+
+function openFareBreakdown(event) {
+  if (event) event.stopPropagation();
+  document.getElementById('break-fuel-label').innerText = `Base Fuel-Cost Sharing (${currentDistKm} km)`;
+  document.getElementById('break-fuel-val').innerText = `₹${currentFare - 5}.00`;
+  document.getElementById('break-total-val').innerText = `₹${currentFare}.00`;
+  
+  if (currentDistKm > 30) {
+    document.getElementById('break-savings-alert').innerHTML = `💰 <strong>You saved ₹2,440.00</strong> compared to intercity private cab surge!`;
+  } else {
+    document.getElementById('break-savings-alert').innerHTML = `💰 <strong>You saved ₹97.00</strong> compared to regular commercial cabs & auto surge!`;
+  }
+
+  document.getElementById('modal-fare-breakdown').style.display = 'flex';
+}
+
+function closeFareBreakdown() {
+  document.getElementById('modal-fare-breakdown').style.display = 'none';
+}
+
+// ========================================================
+// 8. HOST PROFILE & REVIEWS MODAL
+// ========================================================
+
+function openHostReviewsModal(name, rating, count, bike, badge, event) {
+  if (event) event.stopPropagation();
+
+  document.getElementById('modal-host-name').innerText = name;
+  document.getElementById('modal-host-rating').innerText = `⭐ ${rating} (${count} shared rides)`;
+  document.getElementById('modal-host-bike').innerText = bike;
+  document.getElementById('modal-host-badge').innerText = badge;
+  document.getElementById('modal-host-avatar').innerText = name.split(' ').map(n => n[0]).join('');
+
+  document.getElementById('modal-host-profile').style.display = 'flex';
+}
+
+function closeHostReviewsModal() {
+  document.getElementById('modal-host-profile').style.display = 'none';
+}
+
+// ========================================================
+// 9. PAYMENTS & OFFERS MODALS
 // ========================================================
 
 function openPaymentModal() {
@@ -481,7 +835,6 @@ function closePaymentModal() {
 function selectPaymentMethod(method) {
   selectedPayment = method;
   document.getElementById('current-payment-name').innerText = `Paying via ${method}`;
-  
   const radio = document.querySelector(`input[name="pay-method"][value="${method}"]`);
   if (radio) radio.checked = true;
 }
@@ -513,11 +866,11 @@ function toggleGenderFilter() {
 }
 
 function openTripDetails() {
-  alert(`Trip Details:\n\nService: Rapido Bikepool Commute\nFare: ₹${currentFare}\nPickup: 722, Sector R, Mahalaxmi Nagar\nDrop: Savitri Empire, Scheme 54\nInsurance: Covered up to ₹5 Lakh by Rapido Shield`);
+  alert(`Trip Details:\n\nService: ${currentDistKm > 30 ? 'Highway RideShare' : 'Bikepool Commute'}\nFare: ₹${currentFare}\nPickup: 722, Sector R, Mahalaxmi Nagar\nDrop: Savitri Empire, Scheme 54\nInsurance: Covered up to ₹5 Lakh by Rapido Shield`);
 }
 
 function openProfileDrawer() {
-  alert("Rapido Profile:\n\nUser: Abhigya\nRating: ⭐ 4.9 (Trusted Commuter)\nCorporate Email: Verified ✅\nDigiLocker Govt ID: Verified ✅");
+  alert("Rapido Profile:\n\nUser: Abhigya\nRating: ⭐ 4.9 (Trusted Commuter)\nCorporate Email: Verified ✅ (@infosys.com)\nDigiLocker Govt ID: Verified ✅");
 }
 
 function openLocationPicker() {

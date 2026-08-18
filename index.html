@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Rapido — RidePool & Highway</title>
+  <title>Rapido — RidePool & Highway Commute</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,8 +17,8 @@
 </head>
 <body>
 
-  <!-- MOBILE DEVICE CONTAINER -->
-  <div class="mobile-device-container">
+  <!-- MAIN RESPONSIVE CONTAINER (Auto-adjusts: Fullscreen on mobile, centered simulator on web) -->
+  <main class="mobile-device-container" id="app-device-container">
     
     <!-- TOP APP BAR -->
     <header class="rapido-top-app-bar">
@@ -48,10 +48,10 @@
       </div>
     </header>
 
-    <!-- MAP CONTAINER -->
+    <!-- INTERACTIVE MAP CANVAS -->
     <div id="map" class="map-canvas"></div>
 
-    <!-- MAP FLOATING ACTION BUTTONS -->
+    <!-- MAP FLOATING CONTROLS -->
     <div class="map-floating-controls">
       <button class="floating-circle-btn" id="map-back-btn" onclick="handleMapBack()" style="display:none;" title="Back">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -64,17 +64,17 @@
     <!-- ======================================================== -->
     <!-- 0. SCREEN 0: RAPIDO OFFICIAL HOME SCREEN                 -->
     <!-- ======================================================== -->
-    <div class="bottom-sheet sheet-home active-sheet" id="sheet-home">
+    <section class="bottom-sheet sheet-home active-sheet" id="sheet-home">
       <div class="sheet-drag-handle"></div>
 
-      <!-- "Where are you going?" Search Bar -->
+      <!-- "Where are you going?" Search Bar Trigger -->
       <div class="home-search-trigger" onclick="startShareRideFlow()">
         <div class="search-icon-circle">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </div>
         <div class="search-placeholder-text">
           <span class="main-search-lbl">Where are you going?</span>
-          <span class="sub-search-lbl">Search drop location, tech parks, hubs</span>
+          <span class="sub-search-lbl">Search drop location, tech parks, or intercity hubs</span>
         </div>
       </div>
 
@@ -91,7 +91,7 @@
             <div class="card-tag tag-green">Need a Ride</div>
             <div class="card-icon-box">🛵</div>
             <h3 class="card-heading">Share a Ride</h3>
-            <p class="card-desc">Join a verified commuter traveling your way · Save up to 60%</p>
+            <p class="card-desc">Auto-matches City (5-30km) or Highway (>30km) · Save up to 60%</p>
             <div class="card-cta-row">
               <span class="cta-text">Find Co-Riders</span>
               <span class="cta-arrow">➔</span>
@@ -115,7 +115,7 @@
       <!-- STANDARD RAPIDO FLEET GRID -->
       <div class="services-category-title">All Rapido Services</div>
       <div class="rapido-services-grid">
-        <div class="service-grid-tile" onclick="alert('Standard Bike Taxi selected.')">
+        <div class="service-grid-tile" onclick="alert('Standard On-Demand Bike Taxi. (Tip: Use Share a Ride for 50% cheaper pooled commute!)')">
           <div class="service-tile-icon">🛵</div>
           <span class="service-tile-name">Bike</span>
           <span class="service-tile-badge">Fastest</span>
@@ -125,43 +125,43 @@
           <span class="service-tile-name">Auto</span>
           <span class="service-tile-badge">Popular</span>
         </div>
-        <div class="service-grid-tile" onclick="alert('Rapido Cab: Air conditioned comfort rides.')">
+        <div class="service-grid-tile" onclick="alert('Rapido Cab: Air-conditioned pocket-friendly comfort.')">
           <div class="service-tile-icon">🚗</div>
           <span class="service-tile-name">Cab</span>
           <span class="service-tile-badge">Comfort</span>
         </div>
-        <div class="service-grid-tile" onclick="alert('Rapido Parcel: Send food, keys, or packages anywhere.')">
+        <div class="service-grid-tile" onclick="alert('Rapido Parcel: Send food, keys, or packages anywhere in the city.')">
           <div class="service-tile-icon">📦</div>
           <span class="service-tile-name">Parcel</span>
           <span class="service-tile-badge">Delivery</span>
         </div>
       </div>
 
-      <!-- RECENT COMMUTE SHORTCUTS -->
+      <!-- RECENT COMMUTE SHORTCUTS (City vs Highway Demonstration) -->
       <div class="recent-commutes-stack">
-        <div class="recent-row" onclick="quickSelectRoute('Indore Commute', '722, Sector R, Mahalaxmi Nagar', 'Savitri Empire, Scheme 54', 8.2)">
+        <div class="recent-row" onclick="quickSelectRoute('Indore City Commute', '722, Sector R, Mahalaxmi Nagar', 'Savitri Empire, Scheme 54', 8.2)">
           <div class="recent-icon">🕒</div>
           <div class="recent-info">
             <span class="recent-title">Savitri Empire, Scheme No 54</span>
-            <span class="recent-sub">Sector R, Mahalaxmi Nagar · 8.2 km</span>
+            <span class="recent-sub">Inside City Commute · 8.2 km (Auto ₹43)</span>
           </div>
-          <span class="recent-price-pill">Select</span>
+          <span class="recent-price-pill">City Pool</span>
         </div>
-        <div class="recent-row" onclick="quickSelectRoute('Tech Park', 'Indiranagar Metro Station', 'Manyata Tech Park Gate 1', 12.4)">
-          <div class="recent-icon">🏢</div>
+        <div class="recent-row" onclick="quickSelectRoute('Highway Intercity', 'Indore (Vijay Nagar Square)', 'Bhopal (ISBT Bus Terminal)', 195.0)">
+          <div class="recent-icon">🛣️</div>
           <div class="recent-info">
-            <span class="recent-title">Manyata Tech Park, Gate 1</span>
-            <span class="recent-sub">Indiranagar 100ft Road · 12.4 km</span>
+            <span class="recent-title">Bhopal ISBT Bus Terminal</span>
+            <span class="recent-sub">City-to-City Highway · 195 km (From ₹360)</span>
           </div>
-          <span class="recent-price-pill">Select</span>
+          <span class="recent-price-pill purple">Highway</span>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ======================================================== -->
-    <!-- 0B. HOST MODE SELECTOR (INSIDE CITY vs CITY TO CITY)     -->
+    <!-- 0B. HOST MODE SELECTOR (INSIDE CITY vs HIGHWAY)          -->
     <!-- ======================================================== -->
-    <div class="bottom-sheet" id="sheet-host-mode-picker" style="display:none;">
+    <section class="bottom-sheet" id="sheet-host-mode-picker" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="sheet-header-row">
@@ -169,6 +169,16 @@
           <h2 class="sheet-title">How do you want to host?</h2>
           <p class="sheet-subtitle">Choose your travel type to offer your empty seat</p>
         </div>
+      </div>
+
+      <!-- Host Weekly Commute Motivation Card -->
+      <div class="host-savings-banner">
+        <div class="savings-text-col">
+          <span class="savings-pill">WEEKLY COMMUTE IMPACT</span>
+          <span class="savings-main">You offset ₹1,420 in petrol this week!</span>
+          <span class="savings-sub">8 shared office trips · 24 kg CO₂ reduced 🌿</span>
+        </div>
+        <span class="savings-trophy">🏆</span>
       </div>
 
       <div class="host-options-vertical-stack">
@@ -181,8 +191,8 @@
               <h3 class="choice-title">Inside the City (Daily Commute)</h3>
               <p class="choice-desc">Going to office or college? Rapido automatically calculates fair fuel-split fare after you set your route. 5-min live timer.</p>
               <div class="choice-perks">
-                <span>✓ Auto-Generated Fare</span>
-                <span>✓ 5-Min Live Timer</span>
+                <span>✓ Auto Fuel Pricing</span>
+                <span>✓ 5-Min Quick Timer</span>
                 <span>✓ Zero Detour</span>
               </div>
             </div>
@@ -197,7 +207,7 @@
             <div class="choice-icon-wrap">🛣️</div>
             <div class="choice-text-col">
               <h3 class="choice-title">City-to-City (Intercity Highway)</h3>
-              <p class="choice-desc">Traveling between cities? Schedule 1 hr+ in advance, choose your route to unlock your price slider, and split long travel costs.</p>
+              <p class="choice-desc">Traveling between cities? Schedule 1 hr+ in advance, set your own seat price, and split long highway travel expenses.</p>
               <div class="choice-perks">
                 <span>✓ Set Your Own Price</span>
                 <span>✓ Advance Booking (1h+)</span>
@@ -212,22 +222,22 @@
       <button class="rapido-secondary-outline-btn" style="margin-top:14px;" onclick="goHome()">
         Back to Home
       </button>
-    </div>
+    </section>
 
     <!-- ======================================================== -->
-    <!-- 1. PASSENGER FLOW: SHARE A RIDE                           -->
+    <!-- 1. UNIFIED PASSENGER FLOW: SHARE A RIDE (CITY & HIGHWAY)  -->
     <!-- ======================================================== -->
 
-    <!-- Step 1A: Search Route (NO PRICING SHOWN BEFORE ROUTE) -->
-    <div class="bottom-sheet" id="sheet-passenger-search" style="display:none;">
+    <!-- Step 1A: Search Route (Auto-Detects City vs Highway based on Distance) -->
+    <section class="bottom-sheet" id="sheet-passenger-search" style="display:none;">
       <div class="sheet-drag-handle"></div>
       
       <div class="sheet-header-row">
         <div>
           <h2 class="sheet-title">Share a Ride</h2>
-          <p class="sheet-subtitle">Enter your route to find matching commuter hosts</p>
+          <p class="sheet-subtitle">Auto-detects City Commute or Highway based on distance</p>
         </div>
-        <span class="badge-tag green">P2P RidePool</span>
+        <span class="badge-tag green" id="search-mode-tag">Auto Mode</span>
       </div>
 
       <div class="route-input-stack">
@@ -238,17 +248,23 @@
         <div class="route-connector-line"></div>
         <div class="route-input-group">
           <span class="route-dot red-dot"></span>
-          <input type="text" id="passenger-drop-input" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Enter Destination">
+          <input type="text" id="passenger-drop-input" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Enter Destination (City or Other City)">
         </div>
+      </div>
+
+      <!-- Quick Switcher Pills for Testing -->
+      <div class="route-quick-switch-pills">
+        <button class="switch-pill active" onclick="setPassengerRouteType('city')">📍 Inside City (8.2 km)</button>
+        <button class="switch-pill" onclick="setPassengerRouteType('highway')">🛣️ Highway (195 km)</button>
       </div>
 
       <button class="rapido-primary-btn" onclick="goToPassengerPickupCheck()">
         Next: Check Pickup Point ➔
       </button>
-    </div>
+    </section>
 
-    <!-- Step 1B: Check your pickup point (Matches Screenshot 5) -->
-    <div class="bottom-sheet" id="sheet-passenger-pickup" style="display:none;">
+    <!-- Step 1B: Check your pickup point -->
+    <section class="bottom-sheet" id="sheet-passenger-pickup" style="display:none;">
       <div class="sheet-drag-handle"></div>
       
       <div class="sheet-header-with-icon">
@@ -257,7 +273,7 @@
         </div>
         <div>
           <h2 class="sheet-title">Check your pickup point</h2>
-          <p class="sheet-subtitle">Select a nearby point for easier pickup</p>
+          <p class="sheet-subtitle">Select a nearby point for easier corridor meetup</p>
         </div>
       </div>
 
@@ -268,15 +284,15 @@
       <button class="rapido-primary-btn" onclick="confirmPickupAndDiscoverHosts()">
         Confirm pickup & See Matching Hosts
       </button>
-    </div>
+    </section>
 
-    <!-- Step 1C: Matching Hosts Discovery List (NOW PRICING & REVIEWS SHOWN) -->
-    <div class="bottom-sheet" id="sheet-passenger-discovery" style="display:none;">
+    <!-- Step 1C: Matching Hosts Discovery List (Auto-Renders City vs Highway Hosts) -->
+    <section class="bottom-sheet" id="sheet-passenger-discovery" style="display:none;">
       <div class="sheet-drag-handle"></div>
       
       <div class="sheet-header-row">
         <div>
-          <h2 class="sheet-title">Hosts Heading Your Way</h2>
+          <h2 class="sheet-title" id="discovery-title">Hosts Heading Your Way</h2>
           <p class="sheet-subtitle" id="discovery-corridor-summary">Calculated for 8.2 km corridor</p>
         </div>
         <button class="filter-btn" onclick="toggleGenderFilter()">
@@ -285,92 +301,12 @@
       </div>
 
       <div class="host-cards-container" id="host-cards-list">
-        <!-- Host Card 1 -->
-        <div class="host-card" onclick="selectHostCard(1)">
-          <div class="host-card-top">
-            <div class="host-profile-left">
-              <div class="host-avatar">RS</div>
-              <div>
-                <div class="host-name-row">
-                  <span class="host-name">Rahul Sharma</span>
-                  <span class="host-rating">⭐ 4.9 (48)</span>
-                </div>
-                <div class="host-badge-row">
-                  <span class="trust-badge corporate">Verified Infosys</span>
-                  <span class="trust-badge helmet">Extra Helmet</span>
-                </div>
-              </div>
-            </div>
-            <div class="host-price-right">
-              <div class="host-price" id="pax-card-price-1">₹43</div>
-              <div class="host-old-price">₹140 on Taxi</div>
-            </div>
-          </div>
-          
-          <div class="host-meta-row">
-            <span>🏍️ Royal Enfield Hunter 350 (Blue)</span>
-            <span>⏰ <strong>Leaving in 4 mins</strong></span>
-          </div>
-
-          <div class="host-pickup-notice">
-            📍 Pickup: <strong>Main Road Bus Stop</strong> (120m walk · 2 mins)
-          </div>
-
-          <div class="card-actions-row">
-            <button class="view-reviews-btn" onclick="openHostReviewsModal('Rahul Sharma', '4.9', '48', 'Royal Enfield Hunter 350', 'Verified Infosys Commuter', event)">
-              👤 View Profile & Reviews
-            </button>
-            <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="bookHostRide(1, event)">
-              Choose Rider · ₹43
-            </button>
-          </div>
-        </div>
-
-        <!-- Host Card 2 -->
-        <div class="host-card" onclick="selectHostCard(2)">
-          <div class="host-card-top">
-            <div class="host-profile-left">
-              <div class="host-avatar" style="background:#8B5CF6;">PV</div>
-              <div>
-                <div class="host-name-row">
-                  <span class="host-name">Priya Verma</span>
-                  <span class="host-rating">⭐ 4.8 (32)</span>
-                </div>
-                <div class="host-badge-row">
-                  <span class="trust-badge pink">Women Match</span>
-                  <span class="trust-badge helmet">Extra Helmet</span>
-                </div>
-              </div>
-            </div>
-            <div class="host-price-right">
-              <div class="host-price" id="pax-card-price-2">₹40</div>
-              <div class="host-old-price">₹140 on Taxi</div>
-            </div>
-          </div>
-          
-          <div class="host-meta-row">
-            <span>🛵 TVS Jupiter 125 (Grey)</span>
-            <span>⏰ <strong>Leaving in 8 mins</strong></span>
-          </div>
-
-          <div class="host-pickup-notice">
-            📍 Pickup: <strong>Sector R Gate</strong> (80m walk)
-          </div>
-
-          <div class="card-actions-row">
-            <button class="view-reviews-btn" onclick="openHostReviewsModal('Priya Verma', '4.8', '32', 'TVS Jupiter 125', 'Verified Commuter · Pink Pool', event)">
-              👤 View Profile & Reviews
-            </button>
-            <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="bookHostRide(2, event)">
-              Choose Rider · ₹40
-            </button>
-          </div>
-        </div>
+        <!-- Rendered dynamically by app.js based on distance (City or Highway) -->
       </div>
-    </div>
+    </section>
 
-    <!-- Step 1D: Searching for Below Services & Confirmed Ride (Screenshots 2 & 3) -->
-    <div class="bottom-sheet" id="sheet-passenger-waiting" style="display:none;">
+    <!-- Step 1D: Passenger Waiting & Confirmed Ride -->
+    <section class="bottom-sheet" id="sheet-passenger-waiting" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="searching-header-block">
@@ -385,7 +321,7 @@
           <svg width="34" height="34" viewBox="0 0 24 24" fill="#0F172A"><path d="M19 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-7 1.5c-2.3 0-4.3 1.3-5.3 3.2L3.6 8.6A1 1 0 0 0 2.2 10l3.5 3.5c.4.4 1 .4 1.4 0l2.2-2.2c.8-.8 1.9-1.3 3.1-1.3h3.6l1.8 3.6A5 5 0 0 0 15 18a5 5 0 1 0 5-5c-.7 0-1.4.1-2 .4L15.6 9H12zm3 6.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0z"/></svg>
         </div>
         <div class="service-details-mid">
-          <div class="service-name">Bikepool Commute</div>
+          <div class="service-name" id="waiting-service-type-name">Bikepool Commute</div>
           <div class="service-otp" id="display-start-otp" style="display:none;">
             START OTP: <span class="otp-pill">7842</span>
           </div>
@@ -413,8 +349,8 @@
       <div class="dashed-divider"></div>
 
       <div class="fare-payment-summary-row">
-        <div class="fare-total-block">
-          <span class="fare-lbl">Total Fare</span>
+        <div class="fare-total-block" onclick="openFareBreakdown(event)">
+          <span class="fare-lbl">Total Fare (Tap for breakdown)</span>
           <span class="fare-num" id="total-fare-num">₹43</span>
         </div>
         <div class="payment-method-badge" onclick="openPaymentModal()">
@@ -422,6 +358,12 @@
           <span id="current-payment-name">Paying via cash</span>
           <span class="chevron-sm">›</span>
         </div>
+      </div>
+
+      <!-- Quick Communication Buttons with Host -->
+      <div class="comm-actions-row" id="waiting-comm-actions" style="display:none;">
+        <button class="comm-btn" onclick="openChatModal()">💬 Chat with Host</button>
+        <button class="comm-btn" onclick="alert('Calling Host Rahul Sharma...')">📞 Call Host</button>
       </div>
 
       <div class="action-btn-stack" id="waiting-action-buttons">
@@ -432,10 +374,10 @@
           Cancel Ride
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- Step 1E: In-Trip Live Navigation Screen -->
-    <div class="bottom-sheet" id="sheet-in-trip" style="display:none;">
+    <!-- Step 1E: Passenger In-Trip Live Navigation Screen -->
+    <section class="bottom-sheet" id="sheet-in-trip" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="in-trip-hud-header">
@@ -443,28 +385,31 @@
           <span class="pulsing-green-dot"></span>
           <span>RIDE IN PROGRESS</span>
         </div>
-        <span class="trip-time-elapsed" id="trip-live-timer">02:14</span>
+        <span class="trip-time-elapsed" id="trip-live-timer">00:00</span>
       </div>
 
       <div class="in-trip-driver-card">
         <div class="driver-info-left">
-          <div class="host-avatar">RS</div>
+          <div class="host-avatar" id="in-trip-avatar">RS</div>
           <div>
-            <div class="driver-name-text">Rahul Sharma</div>
-            <div class="driver-bike-text">Royal Enfield Hunter 350 (Blue)</div>
+            <div class="driver-name-text" id="in-trip-host-name">Rahul Sharma</div>
+            <div class="driver-bike-text" id="in-trip-host-bike">Royal Enfield Hunter 350 (Blue)</div>
           </div>
         </div>
-        <button class="call-host-btn" onclick="alert('Calling Host Rahul Sharma...')">📞 Call</button>
+        <div class="driver-actions-right">
+          <button class="icon-round-btn" onclick="openChatModal()" title="Chat">💬</button>
+          <button class="icon-round-btn" onclick="alert('Calling Host...')" title="Call">📞</button>
+        </div>
       </div>
 
       <div class="trip-metric-grid">
         <div class="metric-cell">
-          <span class="metric-lbl">Remaining</span>
-          <span class="metric-val" id="in-trip-dist-rem">5.4 km</span>
+          <span class="metric-lbl">Speed</span>
+          <span class="metric-val speed-val" id="in-trip-speed">38 km/h</span>
         </div>
         <div class="metric-cell">
-          <span class="metric-lbl">ETA</span>
-          <span class="metric-val">~11 mins</span>
+          <span class="metric-lbl">Remaining</span>
+          <span class="metric-val" id="in-trip-dist-rem">8.2 km</span>
         </div>
         <div class="metric-cell">
           <span class="metric-lbl">Fare Due</span>
@@ -480,16 +425,16 @@
           🚨 Emergency SOS
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- Step 1F: NEW / LAST PAGE - POST-TRIP SUMMARY & HOST REVIEW SCREEN -->
-    <div class="bottom-sheet" id="sheet-ride-completed" style="display:none;">
+    <!-- Step 1F: Passenger Post-Trip Rating Screen -->
+    <section class="bottom-sheet" id="sheet-ride-completed" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="ride-completed-hero">
         <div class="completed-check-icon">✓</div>
         <h2 class="completed-title">Ride Completed!</h2>
-        <p class="completed-sub">You reached Savitri Empire, Scheme No 54</p>
+        <p class="completed-sub" id="completed-dest-sub">You reached your destination safely</p>
       </div>
 
       <!-- Fare Receipt Card -->
@@ -537,12 +482,14 @@
       <button class="rapido-primary-btn" onclick="submitReviewAndFinish()">
         Submit Review & Return to Home
       </button>
-    </div>
+    </section>
 
     <!-- ======================================================== -->
-    <!-- 2. HOST FLOW A: INSIDE THE CITY (5–30 KM)                 -->
+    <!-- 2. COMPLETE HOST FLOW A: INSIDE THE CITY (5–30 KM)        -->
     <!-- ======================================================== -->
-    <div class="bottom-sheet" id="sheet-host-city-setup" style="display:none;">
+    
+    <!-- Step 2A: Host Setup & Route Calculation -->
+    <section class="bottom-sheet" id="sheet-host-city-setup" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="sheet-header-row">
@@ -608,10 +555,10 @@
           Start 5-Min Hosting Timer ⏱️
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- Live 5-Minute Timer Screen -->
-    <div class="bottom-sheet" id="sheet-host-city-timer" style="display:none;">
+    <!-- Step 2B: Live 5-Minute Timer Screen -->
+    <section class="bottom-sheet" id="sheet-host-city-timer" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="timer-active-header">
@@ -626,6 +573,7 @@
         </div>
       </div>
 
+      <!-- Match notification card -->
       <div class="matched-pax-preview-box" id="host-match-alert" style="display:none;">
         <div class="pax-matched-alert-header">
           <span class="bell-icon">🔔</span>
@@ -634,8 +582,8 @@
         <div class="pax-matched-card">
           <div class="pax-avatar">AK</div>
           <div class="pax-details">
-            <div class="pax-name">Ananya K. (⭐ 4.9)</div>
-            <div class="pax-sub">Waiting at <strong>Vijay Nagar Bus Stop</strong> (On route)</div>
+            <div class="pax-name">Ananya K. (⭐ 4.9 · TCS)</div>
+            <div class="pax-sub">Waiting at <strong>Vijay Nagar Bus Stop</strong> (120m away)</div>
           </div>
           <button class="rapido-primary-btn sm-btn" onclick="hostAcceptPassenger()">
             Accept & Pick Up
@@ -648,12 +596,179 @@
           Cancel & Ride Solo (Zero Penalty)
         </button>
       </div>
-    </div>
+    </section>
+
+    <!-- Step 2C: NEW - Host Navigation to Passenger Pickup Point -->
+    <section class="bottom-sheet" id="sheet-host-pickup-nav" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="in-trip-hud-header">
+        <div class="live-status-pill">
+          <span class="pulsing-green-dot"></span>
+          <span>HEADING TO PICKUP POINT</span>
+        </div>
+        <span class="trip-time-elapsed">ETA ~2 mins</span>
+      </div>
+
+      <div class="pickup-target-banner">
+        <div class="pickup-target-icon">📍</div>
+        <div class="pickup-target-info">
+          <strong>Vijay Nagar Bus Stop</strong>
+          <p>Passenger Ananya K. is waiting at the bus shelter (120m away)</p>
+        </div>
+      </div>
+
+      <div class="host-comm-row">
+        <button class="comm-btn" onclick="openChatModal()">💬 Chat with Ananya</button>
+        <button class="comm-btn" onclick="alert('Calling Ananya K. (Masked Number)...')">📞 Call Passenger</button>
+      </div>
+
+      <div class="action-btn-stack" style="margin-top:12px;">
+        <button class="rapido-primary-btn" onclick="hostArrivedAtPickup()">
+          I Have Arrived at Pickup Point ➔
+        </button>
+        <button class="rapido-secondary-outline-btn" onclick="cancelHostPickup()">
+          Cancel Ride
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 2D: NEW - Host Asks for Start OTP -->
+    <section class="bottom-sheet" id="sheet-host-otp-verify" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="otp-verify-hero">
+        <div class="otp-lock-icon">🔒</div>
+        <h2 class="sheet-title">Ask Passenger for Start OTP</h2>
+        <p class="sheet-subtitle">Ask Ananya for the 4-digit code shown on her app</p>
+      </div>
+
+      <!-- 4-Box PIN Display -->
+      <div class="otp-boxes-row">
+        <input type="text" class="otp-digit" id="otp-digit-1" maxlength="1" value="7">
+        <input type="text" class="otp-digit" id="otp-digit-2" maxlength="1" value="8">
+        <input type="text" class="otp-digit" id="otp-digit-3" maxlength="1" value="4">
+        <input type="text" class="otp-digit" id="otp-digit-4" maxlength="1" value="2">
+      </div>
+
+      <div class="quick-fill-otp-note">
+        <span>💡 Hint: Passenger's OTP is <strong>7842</strong></span>
+      </div>
+
+      <div class="action-btn-stack" style="margin-top:14px;">
+        <button class="rapido-primary-btn" onclick="hostVerifyOtpAndStartRide()">
+          Verify OTP & Start Commute 🏍️
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 2E: NEW - Host Active In-Trip Live Navigation HUD -->
+    <section class="bottom-sheet" id="sheet-host-in-trip" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="in-trip-hud-header">
+        <div class="live-status-pill">
+          <span class="pulsing-green-dot"></span>
+          <span>COMMUTE WITH PASSENGER</span>
+        </div>
+        <span class="trip-time-elapsed" id="host-live-timer">00:00</span>
+      </div>
+
+      <div class="in-trip-driver-card">
+        <div class="driver-info-left">
+          <div class="pax-avatar" style="width:40px; height:40px; font-size:14px;">AK</div>
+          <div>
+            <div class="driver-name-text">Ananya K. (Co-Rider)</div>
+            <div class="driver-bike-text">Destination: Savitri Empire, Scheme 54</div>
+          </div>
+        </div>
+        <div class="driver-actions-right">
+          <button class="icon-round-btn" onclick="openChatModal()" title="Chat">💬</button>
+        </div>
+      </div>
+
+      <div class="trip-metric-grid">
+        <div class="metric-cell">
+          <span class="metric-lbl">Speed</span>
+          <span class="metric-val speed-val" id="host-speed-display">42 km/h</span>
+        </div>
+        <div class="metric-cell">
+          <span class="metric-lbl">Remaining</span>
+          <span class="metric-val" id="host-dist-display">7.8 km</span>
+        </div>
+        <div class="metric-cell">
+          <span class="metric-lbl">Your Payout</span>
+          <span class="metric-val" style="color:#059669;">₹52.00</span>
+        </div>
+      </div>
+
+      <div class="action-btn-stack">
+        <button class="rapido-primary-btn" style="background:#10B981; color:#FFF;" onclick="hostEndTripAndCollectEarnings()">
+          ✓ Reached Destination (End Commute)
+        </button>
+        <button class="sos-btn" onclick="alert('🚨 SOS Alert Sent! Emergency response notified.')">
+          🚨 Emergency SOS
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 2F: NEW - Host Trip Settlement & Rating Screen -->
+    <section class="bottom-sheet" id="sheet-host-completed" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="ride-completed-hero">
+        <div class="completed-check-icon">💰</div>
+        <h2 class="completed-title">₹52.00 Earned!</h2>
+        <p class="completed-sub">Credited directly to your Rapido Wallet / UPI</p>
+      </div>
+
+      <!-- Host Settlement Receipt -->
+      <div class="fare-receipt-card">
+        <div class="receipt-row">
+          <span>Fuel Cost Share Collected</span>
+          <span>₹52.00</span>
+        </div>
+        <div class="receipt-row">
+          <span>Rapido Host Take-Rate</span>
+          <span style="color:#059669;">₹0.00 (Zero Commission on P2P)</span>
+        </div>
+        <div class="receipt-row total">
+          <span>Net Payout to Your Bank</span>
+          <span class="receipt-total-val" style="color:#059669;">₹52.00</span>
+        </div>
+      </div>
+
+      <!-- Host Rates Passenger -->
+      <div class="rating-review-container">
+        <div class="rating-header-title">How was your co-rider Ananya?</div>
+        
+        <div class="star-rating-row" id="host-star-container">
+          <span class="star active" onclick="setHostRating(1)">★</span>
+          <span class="star active" onclick="setHostRating(2)">★</span>
+          <span class="star active" onclick="setHostRating(3)">★</span>
+          <span class="star active" onclick="setHostRating(4)">★</span>
+          <span class="star active" onclick="setHostRating(5)">★</span>
+        </div>
+        <span class="rating-desc-text" id="host-rating-label">Great Co-Rider (5/5)</span>
+
+        <div class="compliments-chips-row">
+          <span class="compliment-chip active" onclick="toggleCompliment(this)">⏰ On Time at Spot</span>
+          <span class="compliment-chip active" onclick="toggleCompliment(this)">🪖 Wore Helmet</span>
+          <span class="compliment-chip active" onclick="toggleCompliment(this)">🤝 Polite & Courteous</span>
+        </div>
+      </div>
+
+      <button class="rapido-primary-btn" onclick="submitHostReviewAndFinish()">
+        Done & Return to Home
+      </button>
+    </section>
 
     <!-- ======================================================== -->
-    <!-- 3. HOST FLOW B: CITY TO CITY (INTERCITY HIGHWAY)          -->
+    <!-- 3. COMPLETE HOST FLOW B: CITY TO CITY (HIGHWAY)           -->
     <!-- ======================================================== -->
-    <div class="bottom-sheet" id="sheet-host-intercity-setup" style="display:none;">
+    
+    <!-- Step 3A: Intercity Setup -->
+    <section class="bottom-sheet" id="sheet-host-intercity-setup" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
       <div class="sheet-header-row">
@@ -679,7 +794,7 @@
       <div class="schedule-picker-box">
         <div class="schedule-lbl">SCHEDULE (Min 1 Hour in Advance)</div>
         <div class="schedule-input-row">
-          <input type="date" id="intercity-date" class="date-field" value="2026-08-16">
+          <input type="date" id="intercity-date" class="date-field" value="2026-08-19">
           <input type="time" id="intercity-time" class="time-field" value="07:30">
         </div>
       </div>
@@ -719,8 +834,170 @@
       <button class="rapido-primary-btn" onclick="publishIntercityTrip()">
         Publish City-to-City Trip 🚀
       </button>
-    </div>
+    </section>
 
+    <!-- Step 3B: NEW - Highway Host Active Trip Dashboard -->
+    <section class="bottom-sheet" id="sheet-host-intercity-dashboard" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="sheet-header-row">
+        <div>
+          <h2 class="sheet-title">Highway Listing Live 🛣️</h2>
+          <p class="sheet-subtitle">Indore ➔ Bhopal · 195 km</p>
+        </div>
+        <span class="badge-tag purple">Live Listing</span>
+      </div>
+
+      <div class="highway-trip-summary-box">
+        <div class="summary-line">
+          <span>📅 Date & Time:</span>
+          <strong>Tomorrow · 07:30 AM</strong>
+        </div>
+        <div class="summary-line">
+          <span>💰 Seat Price:</span>
+          <strong id="intercity-dash-price">₹360 per seat</strong>
+        </div>
+      </div>
+
+      <div class="pax-matched-preview-box">
+        <div class="pax-matched-alert-header">
+          <span class="bell-icon">🔔</span>
+          <strong>1 Co-Traveler Request Received!</strong>
+        </div>
+        <div class="pax-matched-card">
+          <div class="pax-avatar" style="background:#8B5CF6;">VJ</div>
+          <div class="pax-details">
+            <div class="pax-name">Vikram Joshi (⭐ 4.9 · Wipro)</div>
+            <div class="pax-sub">Pickup: <strong>Vijay Nagar Bypass Hub</strong> · 1 Backpack</div>
+          </div>
+          <button class="rapido-primary-btn sm-btn" onclick="acceptHighwayPassenger()">
+            Accept Co-Traveler
+          </button>
+        </div>
+      </div>
+
+      <div class="action-btn-stack" style="margin-top:14px;">
+        <button class="rapido-secondary-outline-btn" onclick="goHome()">
+          Back to Home
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: SAFETY & DUAL HELMET VERIFICATION PROMPT          -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="modal-safety-check" style="display:none;">
+    <div class="modal-sheet">
+      <div class="modal-top-bar">
+        <div class="safety-shield-icon">🛡️</div>
+        <h2 class="modal-title">Rapido Safety Shield</h2>
+        <button class="modal-close-btn" onclick="closeSafetyModal()">✕</button>
+      </div>
+
+      <div class="safety-checklist-box">
+        <div class="safety-check-item">
+          <span class="check-icon">🪖</span>
+          <div>
+            <strong>Mandatory Dual Helmet</strong>
+            <p>Host provides a sanitized ISI-certified helmet. Wearing it is mandatory by law.</p>
+          </div>
+        </div>
+        <div class="safety-check-item">
+          <span class="check-icon">🆔</span>
+          <div>
+            <strong>Verified Corporate Commuter</strong>
+            <p>Matched with verified commuter (Corporate Email + DigiLocker ID verified).</p>
+          </div>
+        </div>
+        <div class="safety-check-item">
+          <span class="check-icon">⚡</span>
+          <div>
+            <strong>Zero Detour Guarantee</strong>
+            <p>Pickup point is on the direct road corridor (Main Road Bus Stop).</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="rapido-primary-btn" onclick="confirmSafetyAndProceedBooking()">
+        I Agree & Confirm Booking
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: IN-APP CHAT WITH HOST / PASSENGER                 -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="modal-chat" style="display:none;">
+    <div class="modal-sheet">
+      <div class="modal-top-bar">
+        <button class="modal-back-btn" onclick="closeChatModal()">←</button>
+        <div class="chat-header-info">
+          <h2 class="modal-title" id="chat-header-name">Rahul Sharma</h2>
+          <span class="chat-online-status">🟢 Online · On the way</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeChatModal()">✕</button>
+      </div>
+
+      <div class="chat-messages-container" id="chat-messages-box">
+        <div class="chat-bubble incoming">
+          <span>Hi! I am leaving in 3 minutes on my blue Hunter 350. Please be ready at the bus stop!</span>
+          <span class="bubble-time">Just now</span>
+        </div>
+      </div>
+
+      <!-- Quick Reply Chips -->
+      <div class="quick-replies-row">
+        <button class="quick-reply-pill" onclick="sendQuickChatMessage('I am at the bus stop in blue shirt 👕')">I am at the bus stop</button>
+        <button class="quick-reply-pill" onclick="sendQuickChatMessage('Reaching in 2 minutes 🏃')">Reaching in 2 mins</button>
+        <button class="quick-reply-pill" onclick="sendQuickChatMessage('I have 1 small backpack 🎒')">1 small backpack</button>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chat-text-input" placeholder="Type a message..." onkeypress="handleChatEnter(event)">
+        <button class="chat-send-btn" onclick="sendChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: FARE BREAKDOWN TRANSPARENCY                      -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="modal-fare-breakdown" style="display:none;">
+    <div class="modal-sheet">
+      <div class="modal-top-bar">
+        <h2 class="modal-title">Fare Breakdown</h2>
+        <button class="modal-close-btn" onclick="closeFareBreakdown()">✕</button>
+      </div>
+
+      <div class="fare-formula-box">
+        <div class="fare-break-row">
+          <span id="break-fuel-label">Base Fuel-Cost Sharing</span>
+          <span id="break-fuel-val">₹38.00</span>
+        </div>
+        <div class="fare-break-row">
+          <span>Rapido Safety & Platform Fee</span>
+          <span>₹5.00</span>
+        </div>
+        <div class="fare-break-row green">
+          <span>Commercial Taxi Surge</span>
+          <span>₹0.00 (Zero Surge on Commute)</span>
+        </div>
+        <div class="fare-break-row total">
+          <span>Total Fare</span>
+          <span class="total-big-val" id="break-total-val">₹43.00</span>
+        </div>
+      </div>
+
+      <div class="savings-alert-box" id="break-savings-alert">
+        💰 <strong>You saved ₹97.00</strong> compared to regular commercial cabs & auto surge!
+      </div>
+
+      <button class="rapido-primary-btn" onclick="closeFareBreakdown()">
+        Got It
+      </button>
+    </div>
   </div>
 
   <!-- ======================================================== -->

@@ -1,3 +1,7 @@
+/* ========================================================
+   RAPIDO RIDEPOOL & HIGHWAY — PRODUCTION DESIGN SYSTEM
+   ======================================================== */
+
 :root {
   --rapido-yellow: #FFC400;
   --rapido-yellow-hover: #F0B800;
@@ -13,6 +17,8 @@
   --rapido-cancel-text: #7F1D1D;
   --shadow-sheet: 0 -8px 32px rgba(15, 23, 42, 0.16);
   --shadow-card: 0 4px 16px rgba(0,0,0,0.06);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 * {
@@ -22,24 +28,30 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
   background: #0B0F17;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--rapido-dark);
-  height: 100vh;
   overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-/* DESKTOP MOBILE FRAME WRAPPER */
+/* ========================================================
+   RESPONSIVE CONTAINER (Auto-adjusts for Mobile & Web)
+   ======================================================== */
 .mobile-device-container {
   position: relative;
   width: 100%;
   max-width: 440px;
-  height: 100vh;
-  max-height: 900px;
+  height: 100dvh;
+  max-height: 890px;
   background: #FFFFFF;
   box-shadow: 0 0 50px rgba(0,0,0,0.6), 0 0 0 8px #1E293B;
   border-radius: 36px;
@@ -48,16 +60,20 @@ body {
   flex-direction: column;
 }
 
-@media (max-width: 480px) {
+/* On mobile phones, automatically expand to 100% full screen */
+@media (max-width: 600px) {
   .mobile-device-container {
-    max-width: 100%;
-    height: 100vh;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     box-shadow: none;
   }
 }
 
-/* TOP APP BAR */
+/* ========================================================
+   TOP APP BAR
+   ======================================================== */
 .rapido-top-app-bar {
   position: absolute;
   top: 0;
@@ -65,7 +81,7 @@ body {
   right: 0;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
-  padding: 12px 16px;
+  padding: calc(12px + var(--safe-top)) 16px 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -153,7 +169,9 @@ body {
   transform: scale(1.06);
 }
 
-/* MAP CANVAS */
+/* ========================================================
+   MAP CANVAS & FLOATING CONTROLS
+   ======================================================== */
 .map-canvas {
   position: absolute;
   top: 0;
@@ -165,10 +183,9 @@ body {
   z-index: 1;
 }
 
-/* MAP FLOATING CONTROLS */
 .map-floating-controls {
   position: absolute;
-  top: 72px;
+  top: calc(72px + var(--safe-top));
   left: 16px;
   right: 16px;
   display: flex;
@@ -196,10 +213,9 @@ body {
   transform: scale(0.92);
 }
 
-/* ======================================================== */
-/* BOTTOM SHEETS                                            */
-/* ======================================================== */
-
+/* ========================================================
+   BOTTOM SHEETS ARCHITECTURE
+   ======================================================== */
 .bottom-sheet {
   position: absolute;
   bottom: 0;
@@ -207,16 +223,17 @@ body {
   right: 0;
   background: #FFFFFF;
   border-radius: 26px 26px 0 0;
-  padding: 8px 18px 24px 18px;
+  padding: 8px 18px calc(24px + var(--safe-bottom)) 18px;
   box-shadow: var(--shadow-sheet);
   z-index: 50;
-  max-height: 82vh;
+  max-height: calc(82dvh - var(--safe-top));
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bottom-sheet.sheet-home {
-  max-height: 68vh;
+  max-height: calc(70dvh - var(--safe-top));
 }
 
 @keyframes slideUp {
@@ -232,10 +249,9 @@ body {
   margin: 4px auto 12px auto;
 }
 
-/* ======================================================== */
-/* 0. HOME SCREEN COMPONENTS                                */
-/* ======================================================== */
-
+/* ========================================================
+   HOME SCREEN COMPONENTS
+   ======================================================== */
 .home-search-trigger {
   background: #F8FAFC;
   border: 1.5px solid #CBD5E1;
@@ -281,7 +297,7 @@ body {
   color: #64748B;
 }
 
-/* BIKESHARE HERO SPLIT CARDS (SHARE vs HOST) */
+/* HERO COMMUTE CARDS */
 .bikepool-hero-container {
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
   border-radius: 20px;
@@ -486,15 +502,58 @@ body {
   border-radius: 12px;
 }
 
-/* ======================================================== */
-/* 0B. HOST MODE PICKER                                     */
-/* ======================================================== */
+.recent-price-pill.purple {
+  background: #F3E8FF;
+  border-color: #D8B4FE;
+  color: #6B21A8;
+}
+
+/* ========================================================
+   HOST MODE PICKER & SAVINGS BANNER
+   ======================================================== */
+.host-savings-banner {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 4px solid var(--rapido-yellow);
+}
+
+.savings-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.savings-pill {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: var(--rapido-yellow);
+  letter-spacing: 0.5px;
+}
+
+.savings-main {
+  font-size: 13px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 2px 0;
+}
+
+.savings-sub {
+  font-size: 10.5px;
+  color: #94A3B8;
+}
+
+.savings-trophy {
+  font-size: 24px;
+}
 
 .host-options-vertical-stack {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 10px;
 }
 
 .host-choice-banner {
@@ -571,10 +630,9 @@ body {
   font-weight: 900;
 }
 
-/* ======================================================== */
-/* GENERAL FORM & BOTTOM SHEET STYLES                       */
-/* ======================================================== */
-
+/* ========================================================
+   FORMS & INPUTS
+   ======================================================== */
 .sheet-header-row {
   display: flex;
   justify-content: space-between;
@@ -619,7 +677,7 @@ body {
   border: 1px solid var(--rapido-border);
   border-radius: 14px;
   padding: 10px 14px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .route-input-group {
@@ -656,6 +714,32 @@ body {
   outline: none;
 }
 
+.route-quick-switch-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.switch-pill {
+  flex: 1;
+  background: #F1F5F9;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.switch-pill.active {
+  background: #FEF08A;
+  border-color: var(--rapido-yellow);
+  color: #0F172A;
+}
+
 .pickup-input-box-green {
   border: 1.5px solid var(--rapido-green);
   background: #FFFFFF;
@@ -673,7 +757,9 @@ body {
   display: block;
 }
 
-/* BUTTONS */
+/* ========================================================
+   BUTTONS
+   ======================================================== */
 .rapido-primary-btn {
   background: var(--rapido-yellow);
   color: #0F172A;
@@ -748,7 +834,9 @@ body {
   border-color: #94A3B8;
 }
 
-/* HOST CARDS LIST */
+/* ========================================================
+   HOST CARDS LIST
+   ======================================================== */
 .host-cards-container {
   display: flex;
   flex-direction: column;
@@ -833,9 +921,11 @@ body {
 .trust-badge.corporate { background: #DCFCE7; color: #15803D; }
 .trust-badge.pink { background: #FCE7F3; color: #9D174D; }
 .trust-badge.helmet { background: #E0E7FF; color: #4338CA; }
+.trust-badge.highway { background: #F3E8FF; color: #6B21A8; }
 
 .host-price-right {
   text-align: right;
+  cursor: pointer;
 }
 
 .host-price {
@@ -895,10 +985,9 @@ body {
   flex: 1;
 }
 
-/* ======================================================== */
-/* WAITING STATE (SCREENSHOTS 2 & 3)                        */
-/* ======================================================== */
-
+/* ========================================================
+   WAITING STATE & IN-TRIP LIVE HUD
+   ======================================================== */
 .searching-header-block {
   margin-bottom: 12px;
 }
@@ -1031,6 +1120,7 @@ body {
 .fare-total-block {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .fare-lbl {
@@ -1057,16 +1147,124 @@ body {
   cursor: pointer;
 }
 
+.comm-actions-row, .host-comm-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.comm-btn {
+  flex: 1;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1E293B;
+  cursor: pointer;
+}
+
 .action-btn-stack {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* ======================================================== */
-/* IN-TRIP LIVE NAVIGATION HUD SCREEN                       */
-/* ======================================================== */
+/* ========================================================
+   HOST JOURNEY NEW STYLES (Pickup Nav, OTP, In-Trip, Dashboard)
+   ======================================================== */
+.pickup-target-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F0FDF4;
+  border: 1.5px solid #86EFAC;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
 
+.pickup-target-icon {
+  font-size: 24px;
+}
+
+.pickup-target-info strong {
+  font-size: 13.5px;
+  color: #166534;
+  display: block;
+}
+
+.pickup-target-info p {
+  font-size: 11px;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.otp-verify-hero {
+  text-align: center;
+  padding: 6px 0 14px 0;
+}
+
+.otp-lock-icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+
+.otp-boxes-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.otp-digit {
+  width: 48px;
+  height: 54px;
+  background: #F8FAFC;
+  border: 2px solid var(--rapido-yellow);
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--rapido-dark);
+  outline: none;
+}
+
+.quick-fill-otp-note {
+  text-align: center;
+  font-size: 11px;
+  color: #64748B;
+}
+
+.highway-trip-summary-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.pax-matched-preview-box {
+  background: #FFFBEB;
+  border: 1.5px solid #FCD34D;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* ========================================================
+   IN-TRIP HUD & SPEEDOMETER
+   ======================================================== */
 .in-trip-hud-header {
   display: flex;
   justify-content: space-between;
@@ -1136,14 +1334,21 @@ body {
   color: var(--rapido-muted);
 }
 
-.call-host-btn {
+.driver-actions-right {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-round-btn {
   background: #FFFFFF;
   border: 1px solid #CBD5E1;
-  border-radius: 18px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 800;
-  color: #0F172A;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
@@ -1175,6 +1380,11 @@ body {
   color: var(--rapido-dark);
 }
 
+.speed-val {
+  color: #2563EB;
+  font-family: 'JetBrains Mono', monospace;
+}
+
 .sos-btn {
   background: #FEF2F2;
   border: 1.5px solid #F87171;
@@ -1188,10 +1398,9 @@ body {
   cursor: pointer;
 }
 
-/* ======================================================== */
-/* POST-TRIP SUMMARY & REVIEW RATING SCREEN                 */
-/* ======================================================== */
-
+/* ========================================================
+   POST-TRIP SUMMARY & RATING
+   ======================================================== */
 .ride-completed-hero {
   text-align: center;
   padding: 8px 0 16px 0;
@@ -1337,121 +1546,9 @@ body {
   outline: none;
 }
 
-/* ======================================================== */
-/* HOST PROFILE & REVIEWS MODAL                             */
-/* ======================================================== */
-
-.host-profile-hero-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #F8FAFC;
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.host-big-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #3B82F6;
-  color: #FFFFFF;
-  font-weight: 900;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.host-hero-name {
-  font-size: 16px;
-  font-weight: 900;
-  color: var(--rapido-dark);
-}
-
-.host-hero-rating {
-  font-size: 12px;
-  font-weight: 700;
-  color: #D97706;
-}
-
-.host-hero-badge {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #059669;
-}
-
-.host-details-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background: #F1F5F9;
-  border-radius: 12px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
-  font-size: 12px;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.detail-lbl {
-  font-weight: 700;
-  color: #64748B;
-}
-
-.detail-val {
-  font-weight: 700;
-  color: var(--rapido-dark);
-}
-
-.reviews-list-section {
-  max-height: 28vh;
-  overflow-y: auto;
-}
-
-.reviews-heading {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--rapido-dark);
-  margin-bottom: 8px;
-}
-
-.review-item-card {
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #FFFFFF;
-}
-
-.review-item-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 3px;
-}
-
-.review-text {
-  font-size: 11.5px;
-  color: #334155;
-  line-height: 1.4;
-  margin-bottom: 4px;
-}
-
-.review-date {
-  font-size: 9.5px;
-  color: #94A3B8;
-}
-
-/* ======================================================== */
-/* HOST FLOW 2 & 3 STYLES                                   */
-/* ======================================================== */
-
+/* ========================================================
+   HOST FLOW 2 & 3 COMPONENTS
+   ======================================================== */
 .distance-rule-indicator {
   display: flex;
   align-items: center;
@@ -1764,10 +1861,9 @@ body {
   font-weight: 600;
 }
 
-/* ======================================================== */
-/* MODALS                                                   */
-/* ======================================================== */
-
+/* ========================================================
+   MODALS SYSTEM
+   ======================================================== */
 .modal-overlay {
   position: absolute;
   top: 0;
@@ -1775,6 +1871,7 @@ body {
   right: 0;
   bottom: 0;
   background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
   z-index: 2000;
   display: flex;
   align-items: flex-end;
@@ -1790,9 +1887,10 @@ body {
   width: 100%;
   background: #FFFFFF;
   border-radius: 24px 24px 0 0;
-  padding: 16px 20px 28px 20px;
-  max-height: 85vh;
+  padding: 16px 20px calc(28px + var(--safe-bottom)) 20px;
+  max-height: calc(85dvh - var(--safe-top));
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: slideUp 0.25s ease-out;
 }
 
@@ -1800,7 +1898,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .modal-back-btn, .modal-close-btn {
@@ -1813,7 +1911,7 @@ body {
 }
 
 .modal-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   color: var(--rapido-dark);
 }
@@ -1824,6 +1922,193 @@ body {
   color: var(--rapido-dark);
 }
 
+/* SAFETY SHIELD MODAL */
+.safety-shield-icon {
+  font-size: 24px;
+}
+
+.safety-checklist-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 18px 0;
+}
+
+.safety-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.check-icon {
+  font-size: 24px;
+}
+
+.safety-check-item strong {
+  font-size: 13px;
+  color: var(--rapido-dark);
+  display: block;
+}
+
+.safety-check-item p {
+  font-size: 11.5px;
+  color: #64748B;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+/* IN-APP CHAT MODAL */
+.chat-header-info {
+  text-align: center;
+}
+
+.chat-online-status {
+  font-size: 11px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.chat-messages-container {
+  min-height: 140px;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-bubble.incoming {
+  align-self: flex-start;
+  background: #F1F5F9;
+  color: #0F172A;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble.outgoing {
+  align-self: flex-end;
+  background: var(--rapido-yellow);
+  color: #0F172A;
+  font-weight: 600;
+  border-bottom-right-radius: 2px;
+}
+
+.bubble-time {
+  font-size: 9px;
+  color: #64748B;
+  align-self: flex-end;
+  margin-top: 4px;
+}
+
+.quick-replies-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 0 10px 0;
+}
+
+.quick-reply-pill {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.quick-reply-pill:hover {
+  background: #E2E8F0;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 20px;
+  padding: 4px 6px 4px 14px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 12.5px;
+}
+
+.chat-send-btn {
+  background: var(--rapido-yellow);
+  border: none;
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* FARE BREAKDOWN MODAL */
+.fare-formula-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.fare-break-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.fare-break-row.green {
+  color: #059669;
+  font-weight: 700;
+}
+
+.fare-break-row.total {
+  border-top: 1px dashed #CBD5E1;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 900;
+  color: var(--rapido-dark);
+}
+
+.total-big-val {
+  font-size: 18px;
+}
+
+.savings-alert-box {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #065F46;
+  margin-bottom: 16px;
+}
+
+/* PAYMENTS MODAL */
 .payment-options-container {
   display: flex;
   flex-direction: column;
@@ -1902,6 +2187,7 @@ body {
   margin-top: 8px;
 }
 
+/* OFFERS MODAL */
 .offers-scroll-area {
   display: flex;
   flex-direction: column;
@@ -2001,10 +2287,119 @@ body {
   color: var(--rapido-muted);
 }
 
-/* ======================================================== */
-/* MAP MARKERS                                              */
-/* ======================================================== */
+/* ========================================================
+   HOST PROFILE & REVIEWS MODAL
+   ======================================================== */
+.host-profile-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #F8FAFC;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
 
+.host-big-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #3B82F6;
+  color: #FFFFFF;
+  font-weight: 900;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.host-hero-name {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--rapido-dark);
+}
+
+.host-hero-rating {
+  font-size: 12px;
+  font-weight: 700;
+  color: #D97706;
+}
+
+.host-hero-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.host-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #F1F5F9;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail-lbl {
+  font-weight: 700;
+  color: #64748B;
+}
+
+.detail-val {
+  font-weight: 700;
+  color: var(--rapido-dark);
+}
+
+.reviews-list-section {
+  max-height: 28vh;
+  overflow-y: auto;
+}
+
+.reviews-heading {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--rapido-dark);
+  margin-bottom: 8px;
+}
+
+.review-item-card {
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #FFFFFF;
+}
+
+.review-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.review-text {
+  font-size: 11.5px;
+  color: #334155;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.review-date {
+  font-size: 9.5px;
+  color: #94A3B8;
+}
+
+/* ========================================================
+   MAP PIN STYLES
+   ======================================================== */
 .custom-pickup-bubble {
   background: var(--rapido-green);
   color: #FFFFFF;
