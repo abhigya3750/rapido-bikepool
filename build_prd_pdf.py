@@ -1,118 +1,114 @@
 #!/usr/bin/env python3
+"""
+Compiles the Executive Corporate PRD (Product Requirements Document) into a clean, readable PDF.
+Follows modern corporate PRD standards (Uber/Rapido/Airbnb style: concise, wireframe-backed, high-density).
+"""
+
 import os
-import sys
 from pdf_builder import PDFDoc
 
-def generate_prd():
-    pdf = PDFDoc(title="Rapido Bikepool & Highway PRD", author="Senior Product Manager")
+def build_prd_pdf(output_path):
+    doc = PDFDoc(title="Rapido RidePool — Executive PRD", author="Senior Product Manager")
     
-    # 1. Header Banner
+    # -------------------------------------------------------------
+    # PAGE 1: HEADER & SYSTEM ARCHITECTURE
+    # -------------------------------------------------------------
     meta = [
-        ("Doc Version", "v1.0 (Ready)"),
-        ("Product Line", "Rapido Commute & Highway"),
-        ("Lead PM", "Senior PM (Mobility)"),
-        ("Target Release", "Q4 2026")
+        ("Product", "Rapido RidePool"),
+        ("Doc Type", "Executive PRD v2.0"),
+        ("Target", "Eng Leads & Designers"),
+        ("Version", "2.0 (Production Ready)")
     ]
-    pdf.draw_header_banner(
-        doc_type="Product Requirements Document (PRD)",
-        main_title="Rapido Bikepool & Highway Product Specs",
-        subtitle="Feature Specifications, User Stories, System Logic & Acceptance Criteria",
+    doc.draw_header_banner(
+        doc_type="PRODUCT REQUIREMENTS DOCUMENT",
+        main_title="Rapido RidePool: City Commute & Highway",
+        subtitle="End-to-End Product Specifications, Flow State Machines & Technical Rules",
         meta_items=meta
     )
     
-    # Section 1
-    pdf.draw_heading1("01", "Product Overview & Context")
-    pdf.draw_paragraph(
-        "This Product Requirements Document (PRD) defines the end-to-end specifications for Rapido's peer-to-peer Bikepooling ecosystem. It enables private two-wheeler owners to monetize empty pillion seats during daily office commutes and intercity trips with zero detours, while giving budget commuters verified, route-matched rides at 50% lower fares than traditional cabs and autos."
+    doc.draw_heading1("1", "Product Objectives & Strategic Scope")
+    doc.draw_paragraph(
+        "Rapido RidePool introduces a formal peer-to-peer two-wheeler sharing ecosystem inside the primary consumer app. It serves daily urban commuters (5-30 km) and highway intercity travelers (>30 km) through automated matching and transparent cost recovery."
     )
     
-    pdf.draw_callout_box(
-        "Product Vision Statement",
-        "Build India's largest non-commercial peer-to-peer two-wheeler commute and highway network that unlocks organic commuter supply, eliminates driver subsidies, and delivers deterministic corridor transit.",
+    doc.draw_callout_box(
+        "Core Value Proposition",
+        "* For Hosts: Offset 70% to 100% of daily fuel costs without commercial driving obligations.\n"
+        "* For Passengers: 50% cheaper corridor transit with verified peers and zero surge pricing.\n"
+        "* For Rapido: Massive new supply network with zero driver acquisition costs.",
         box_type="info"
     )
     
-    # Section 2
-    pdf.draw_heading1("02", "Product Goals, Non-Goals & Success Metrics")
-    pdf.draw_heading2("Core Product Goals")
-    pdf.draw_bullet_point("Frictionless Host Setup", "Enable any private bike owner to list a commute in under 30 seconds.")
-    pdf.draw_bullet_point("Deterministic Corridor Matching", "Achieve >=70% match rate along transit corridors with <=400m detour.")
-    pdf.draw_bullet_point("Safety & Verification Shield", "Ensure >=85% of rides occur between corporate-verified or Govt-ID verified peers.")
-    
-    pdf.draw_heading2("Explicit Non-Goals (Out of Scope Phase 1)")
-    pdf.draw_bullet_point("Door-to-Door Detours", "App will not force hosts into narrow alleys. Passengers walk to Corridor Pickup Landmarks.")
-    pdf.draw_bullet_point("Forced Dispatch", "No algorithmic forced ride assignment. All matches are 100% voluntary.")
-    
-    headers_kpi = ["Success Metric", "Target SLA / Goal", "Business Impact"]
-    rows_kpi = [
-        ["North Star Metric", "Weekly Pooled Commute KM Shared", "Direct indicator of network liquidity & GMV"],
-        ["Corridor Match Rate", ">= 70% of total searches", "High conversion & low search abandonment"],
-        ["Zero-Detour Adherence", "<= 350 meters avg. walking distance", "Protects host commute speed & convenience"],
-        ["Host Retention", ">= 55% hosts posting >=3 rides/week", "Organic, self-sustaining supply base"],
-        ["Cancellation Rate", "<= 4.5% within 15 min of departure", "Ensures high rider reliability during rush hour"]
-    ]
-    pdf.draw_table(headers_kpi, rows_kpi, col_widths=[140, 160, 205])
-    
-    # Section 3
-    pdf.draw_heading1("03", "Epic 1: Intra-City Commute Ride Hosting (5-30 km)")
-    pdf.draw_paragraph(
-        "Enables daily bike owners to list their office commute with a 5-minute countdown and automatic non-surge pricing."
+    doc.draw_heading1("2", "Unified Passenger Flow: 'Share a Ride'")
+    doc.draw_paragraph(
+        "The passenger flow is unified into a single intelligent entry point that automatically detects route distance:"
     )
-    pdf.draw_bullet_point("US 1.1 Distance Validation", "Requires 5.0 km to 30.0 km route. Rejects micro-hops (<5km) and routes >30km to Highway mode.")
-    pdf.draw_bullet_point("US 1.2 Automated Pricing", "Platform locks fare: Base Rs 15 + (Dist x Rs 4.5/km). Non-negotiable cost-recovery math.")
-    pdf.draw_bullet_point("US 1.3 5-Min Live Countdown", "Host activates 5:00 min timer. Co-riders book instantly. If no match at 00:00, host proceeds solo.")
-    pdf.draw_bullet_point("US 1.4 Corridor Landmarks", "Snaps pickup to major transit hubs (Metro gates, bus stops). Enforces zero detour.")
+    doc.draw_bullet_point("Step 1 (Route Entry & Auto-Detection)", "User enters pickup and drop points. Routes <=30 km automatically activate Inside City Commute mode; routes >30 km activate Highway Intercity mode.")
+    doc.draw_bullet_point("Step 2 (Pickup Landmark Pin)", "Interactive map centers on green 'Pickup Point' bubble marker pointing to the nearest direct arterial road bus stop (120m walk).")
+    doc.draw_bullet_point("Step 3 (Matching Hosts Discovery)", "Displays co-riders on route with vehicle model, star rating (4.9), corporate badge (Infosys, TCS), and real written reviews.")
+    doc.draw_bullet_point("Step 4 (Rapido Safety Shield)", "Mandatory dual ISI helmet confirmation and corporate verification check before booking.")
+    doc.draw_bullet_point("Step 5 (Active Trip HUD & Speedometer)", "4-digit start OTP (7842) -> live moving bike marker -> dynamic speedometer (38-44 km/h) -> bilateral 5-star rating.")
     
-    # Section 4
-    pdf.draw_heading1("04", "Epic 2: Inter-City Highway Ride Hosting (City-to-City)")
-    pdf.draw_paragraph(
-        "Enables riders traveling between cities (30-350 km) to schedule trips in advance and split highway costs."
-    )
-    pdf.draw_bullet_point("US 2.1 Advance Scheduling", "Mandatory booking lead time of >= 1 hour prior to departure (can be scheduled up to 7 days ahead).")
-    pdf.draw_bullet_point("US 2.2 Guardrailed Price Slider", "Host sets per-seat price within platform-bounded range (Rs 2.00 - Rs 3.80 per km).")
-    pdf.draw_bullet_point("US 2.3 Gear & Luggage Checklist", "Explicit declaration: Extra ISI helmet provided, max 1 backpack (<7kg), and planned rest halts.")
-    pdf.draw_bullet_point("US 2.4 Profile Review Mode", "Host can review co-traveler's verified company badge and rating before confirming request.")
+    # -------------------------------------------------------------
+    # PAGE 2: COMPLETE 5-STEP HOST LIFECYCLE (CITY COMMUTE)
+    # -------------------------------------------------------------
+    doc.start_new_page()
     
-    # Section 5
-    pdf.draw_heading1("05", "Epic 3: Passenger Corridor Discovery & Matching Engine")
-    pdf.draw_bullet_point("US 3.1 Polyline Match Query", "Searches active & scheduled host polylines passing within <=400m of pickup and <=500m of drop.")
-    pdf.draw_bullet_point("US 3.2 Host Comparison Card", "Displays host photo, company badge (e.g. Infosys), rating (4.9/5), bike model, walking dist & price.")
-    pdf.draw_bullet_point("US 3.3 OTP Start & Cashless Payout", "4-digit OTP activates live GPS telemetry. Trip completion automatically credits host UPI/wallet.")
-    
-    # Section 6
-    pdf.draw_heading1("06", "Trust, Safety & Regulatory Architecture")
-    pdf.draw_callout_box(
-        "Compliance & Safety Moat",
-        "1. White-Plate Compliance: Strict max 2 rides/day per host.\n2. Dual Verification: Corporate email (@company.com) + DigiLocker KYC.\n3. Pink Pool: Women-only matching option.\n4. Dual Helmet: Mandatory pre-trip ISI helmet check.\n5. Live SOS & Telemetry: Automatic anomaly detection if route deviates >1 km.",
-        box_type="success"
+    doc.draw_heading1("3", "Complete 5-Step Host Lifecycle (Inside City: 5–30 km)")
+    doc.draw_paragraph(
+        "The Host experience eliminates commercial taxi friction and automates the entire daily commute sharing lifecycle:"
     )
     
-    # Section 7
-    pdf.draw_heading1("07", "Cancellation & SLA Penalty Matrix")
-    headers_cancel = ["Trigger Scenario", "Cancelled By", "Time Window", "Action / Penalty"]
-    rows_cancel = [
-        ["Advance Cancellation", "Host", "> 30 min before departure", "Zero penalty; Passenger auto-rematched."],
-        ["Late Host Cancellation", "Host", "< 15 min before departure", "Rs 50 fee deducted from next payout + 24h freeze."],
-        ["Passenger No-Show", "Passenger", "> 5 min past meeting time", "Rs 30 compensation transferred to Host."],
-        ["Expired 5-Min Timer", "System", "Timer reaches 00:00 without match", "Zero penalty; Host proceeds safely on solo ride."]
+    host_headers = ["Lifecycle Step", "System Action & UI Screen", "User Experience Outcome"]
+    host_rows = [
+        ["1. Route Setup & Range Check", "Host enters origin & office destination. System validates 5 to 30 km range.", "Calculates exact fuel split earnings (Rs 52.00) and displays fuel offset badge."],
+        ["2. 5-Min Hosting Radar", "Host taps 'Start 5-Min Hosting Timer'. Radial countdown radar activates on map.", "Broadcasts route to nearby commuters. Match alert arrives at 3s ('Ananya K. at Bus Stop')."],
+        ["3. Host Pickup Navigation", "Host taps 'Accept & Pick Up'. Map routes host directly to passenger's bus stop.", "Displays ETA (~2 mins), landmark info, and masked in-app chat/call tools."],
+        ["4. Start OTP Verification", "Host arrives at spot -> enters 4-digit code shown on passenger's app (7842).", "PIN verification ensures correct rider boarding before ride start."],
+        ["5. Host In-Trip & Settlement", "Active HUD displays speed (42 km/h), distance (7.8 km), and passenger on pillion.", "Host taps 'Reached Destination' -> Rs 52.00 credited to wallet with 0% take-rate -> rates passenger."]
     ]
-    pdf.draw_table(headers_cancel, rows_cancel, col_widths=[125, 75, 125, 180])
+    doc.draw_table(host_headers, host_rows, col_widths=[120, 205, 180])
     
-    # Section 8
-    pdf.draw_heading1("08", "Telemetry & Event Tracking Taxonomy")
-    headers_event = ["Event Name", "Trigger Action", "Key Payload Properties"]
-    rows_event = [
-        ["bikepool_host_publish", "Host lists commute ride", "service_type, distance_km, is_5min_timer, origin, destination"],
-        ["bikepool_corridor_search", "Passenger searches route", "pickup_lat_lng, drop_lat_lng, matches_found_count"],
-        ["bikepool_card_selected", "Passenger taps host card", "host_user_id, host_rating, corporate_verified, fare_delta"],
-        ["bikepool_ride_started", "Host inputs 4-digit OTP", "booking_id, host_id, passenger_id, start_time_delay"],
-        ["bikepool_ride_settled", "Host taps complete trip", "distance_actual, gmv_amount, host_payout, rating_submitted"]
+    doc.draw_heading1("4", "Host Flow B: City-to-City Highway (>30 km)")
+    doc.draw_bullet_point("Advance Scheduling", "Intercity trips are scheduled >= 1 hour in advance (e.g. Indore to Bhopal, 195 km).")
+    doc.draw_bullet_point("Dynamic Price Slider", "Host sets seat price bounded by fair fuel guardrails (Min Rs 260, Suggested Rs 360, Max Rs 520).")
+    doc.draw_bullet_point("Gear & Halt Checklist", "Host declares spare ISI helmet, luggage allowance (< 7 kg standard backpack), and planned highway refreshment halts.")
+    doc.draw_bullet_point("Active Highway Dashboard", "Live listing feed shows co-traveler requests (e.g. Vikram Joshi, Wipro) -> Host accepts -> confirmed travel voucher.")
+    
+    # -------------------------------------------------------------
+    # PAGE 3: TECHNICAL FORMULAS, SAFETY & ACCEPTANCE CRITERIA
+    # -------------------------------------------------------------
+    doc.start_new_page()
+    
+    doc.draw_heading1("5", "Technical Pricing Logic & Distance Guardrails")
+    
+    doc.draw_callout_box(
+        "Automated Pricing Formulas",
+        "* Inside City Host Payout = Round(15 + [Distance in km x Rs 4.50]) -> 100% credited to host wallet.\n"
+        "* Passenger Total Fare = Round(15 + [Distance in km x Rs 3.40]) + Rs 5.00 Platform & Insurance Fee.\n"
+        "* Distance Rules: Minimum 5.0 km (prevents walk cannibalization); Maximum 30.0 km for City Pool.\n"
+        "* Zero Surge Policy: 100% immune to peak-hour, traffic, or weather surge pricing.",
+        box_type="info"
+    )
+    
+    doc.draw_heading1("6", "Safety, Trust & Compliance Engine")
+    doc.draw_bullet_point("Dual ISI Helmet Check", "Pre-ride modal requires host and passenger to confirm sanitized ISI helmet availability.")
+    doc.draw_bullet_point("Corporate Verification", "Email verification (@company.com) + DigiLocker Govt ID badge displayed on profiles.")
+    doc.draw_bullet_point("Telemetry & SOS", "Live speed monitoring (38-44 km/h) and one-tap emergency SOS connected to Rapido response.")
+    
+    doc.draw_heading1("7", "Engineering Acceptance Criteria")
+    
+    ac_headers = ["Module", "Acceptance Criteria", "Status"]
+    ac_rows = [
+        ["Unified Distance Engine", "Auto-switches to City Pool (<=30km) or Highway (>30km) upon destination change.", "Verified & Live"],
+        ["5-Min Host Radar", "Accurate countdown timer with zero-penalty cancellation if no match occurs.", "Verified & Live"],
+        ["OTP Handshake", "Trip start locked until host enters matching 4-digit passenger OTP (7842).", "Verified & Live"],
+        ["Responsive Layout", "Auto-scales to 100% full-screen (100dvh) on mobile and centers on web browsers.", "Verified & Live"]
     ]
-    pdf.draw_table(headers_event, rows_event, col_widths=[140, 135, 230])
+    doc.draw_table(ac_headers, ac_rows, col_widths=[125, 275, 105])
     
-    output_pdf = "/Users/abhigya3750/Downloads/Antigravitiy Workspace /Rapido project/Rapido_Bikepool_PRD.pdf"
-    pdf.save(output_pdf)
-    return output_pdf
+    doc.save(output_path)
 
 if __name__ == "__main__":
-    generate_prd()
+    out = os.path.join(os.path.dirname(__file__), "Rapido_Bikepool_PRD.pdf")
+    build_prd_pdf(out)

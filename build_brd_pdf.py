@@ -1,142 +1,118 @@
 #!/usr/bin/env python3
+"""
+Compiles the Executive Corporate BRD (Business Requirements Document) into a clean, readable PDF.
+Follows top-tier corporate strategy document standards (concise, humanized, high-impact).
+"""
+
 import os
-import sys
 from pdf_builder import PDFDoc
 
-def generate_brd():
-    pdf = PDFDoc(title="Rapido Bikepool & Highway BRD", author="Senior Product Manager")
+def build_brd_pdf(output_path):
+    doc = PDFDoc(title="Rapido RidePool — Executive BRD", author="Senior Product Manager")
     
-    # 1. Header Banner
+    # -------------------------------------------------------------
+    # PAGE 1: HEADER & EXECUTIVE SUMMARY (THE COMMUTER LOOPHOLE)
+    # -------------------------------------------------------------
     meta = [
-        ("Doc Version", "v1.0 (Final)"),
-        ("Initiative", "Project Parinda"),
-        ("Author", "Principal PM"),
-        ("Date", "August 2026")
+        ("Product", "Rapido RidePool"),
+        ("Doc Type", "Executive BRD v2.0"),
+        ("Target", "Founders & VP Product"),
+        ("Status", "Approved Proposal")
     ]
-    pdf.draw_header_banner(
-        doc_type="Business Requirements Document (BRD)",
-        main_title="Rapido Commute & Highway Bikepool",
-        subtitle="Monetizing Organic P2P Commute Sharing & Intercity Bike Travel",
+    doc.draw_header_banner(
+        doc_type="BUSINESS REQUIREMENTS DOCUMENT",
+        main_title="Rapido RidePool: City Commute & Highway",
+        subtitle="Formalizing Organic Commuter Bike-Sharing into a Dedicated P2P Platform",
         meta_items=meta
     )
     
-    # Section 1
-    pdf.draw_heading1("01", "Executive Summary & Market Opportunity")
-    pdf.draw_paragraph(
-        "Across major Indian metropolitan tech hubs (Bengaluru, Hyderabad, Pune, Delhi-NCR, Chennai), thousands of private two-wheeler owners register on the Rapido Captain app not to work as full-time gig workers, but as daily office commuters seeking to offset steep fuel expenses (petrol at Rs 100+/L). However, because the current Captain app is designed strictly for commercial on-demand dispatch, these riders face severe friction."
+    doc.draw_heading1("1", "Executive Summary: The Ground Reality & Organic Loophole")
+    doc.draw_paragraph(
+        "Every day across major Indian tech hubs (Bengaluru, Hyderabad, Pune, Indore), thousands of two-wheeler owners commute to work alone while spending over Rs 3,500/month on petrol. To offset this daily cost, an increasing number of regular working professionals are onboarding onto the commercial Rapido Captain app."
+    )
+    doc.draw_paragraph(
+        "However, they are not full-time commercial drivers. When a bike owner commutes from Vijay Nagar to Palasia (or Sector R to Scheme 54), they open Rapido solely to cherry-pick a co-rider traveling in their exact corridor. They reject all other rides, call passengers asking 'Where are you going?', and share their pillion seat to cover 70% to 100% of their daily petrol cost."
     )
     
-    pdf.draw_callout_box(
-        "Market Problem Statement",
-        "Commuters are hacking the commercial bike-taxi platform by canceling non-matching rides and calling customers offline. This leads to driver account penalties, poor passenger reliability, and lost revenue. Meanwhile, passengers face 50-70% higher surge pricing on autos and cabs during peak hours.",
+    doc.draw_callout_box(
+        "The Market Opportunity for Rapido",
+        "Instead of forcing casual commuters into a commercial taxi flow (which distorts supply and causes high cancellations), Rapido can formalize this organic behavior into a dedicated, zero-commission Peer-to-Peer RidePool platform directly inside the consumer app.",
         box_type="warning"
     )
     
-    pdf.draw_heading2("Strategic Shift: Commercial Captain vs. Peer-to-Peer Commuter")
-    pdf.draw_bullet_point("Driver Motivation", "Commercial Captains work for full-time livelihood; P2P Commuters ride for fuel cost recovery.")
-    pdf.draw_bullet_point("Route Control", "Commercial rides are passenger-directed; P2P rides are 100% Host corridor-directed.")
-    pdf.draw_bullet_point("Vehicle & Regulation", "Commercial operates under taxi permits; P2P operates under MoRTH non-commercial cost-sharing carpooling rules.")
-    pdf.draw_bullet_point("Supply Acquisition", "Zero driver acquisition subsidies needed as commuter supply is organic and self-sustaining.")
+    doc.draw_heading1("2", "The Core Problem Statement & Market Friction")
     
-    # Section 2
-    pdf.draw_heading1("02", "Strategic Business Objectives & Core OKRs")
-    pdf.draw_paragraph(
-        "The objective of this initiative is to create a multi-million daily ride-share ecosystem with zero driver acquisition burn by formalizing peer bikepooling and intercity bike-sharing."
+    table_headers = ["Stakeholder", "Friction on Current Commercial App", "Business Impact"]
+    table_rows = [
+        ["Bike Owner (Host)", "Algorithm sends 3 km detours; penalized for rejecting off-route commercial rides.", "Frustration, high cancellations, calls asking 'Where to go?'."],
+        ["Passenger (Co-Rider)", "Suffers sudden cancellations; pays high peak-hour commercial taxi/auto surge fares.", "Unpredictable daily transit; paying Rs 160+ for Rs 40 routes."],
+        ["Rapido (Platform)", "Supply metric distortion during rush hours; missed peer-to-peer network effects.", "High cancellation rates; missed revenue in daily commuter pooling."]
+    ]
+    doc.draw_table(table_headers, table_rows, col_widths=[110, 220, 175])
+    
+    # -------------------------------------------------------------
+    # PAGE 2: THE TWO PRODUCT OFFERINGS & USER PERSONAS
+    # -------------------------------------------------------------
+    doc.start_new_page()
+    
+    doc.draw_heading1("3", "The Two Core Product Offerings")
+    
+    doc.draw_heading2("Offering 1: Share a Ride (Unified Passenger Flow)")
+    doc.draw_bullet_point("Auto Distance Routing", "Passenger enters origin and destination. The platform automatically detects whether the route is an Inside City Commute (<=30 km) or Highway Intercity (>30 km).")
+    doc.draw_bullet_point("Corridor Match & Trust", "Displays verified hosts already riding along that path with ratings, corporate company badges (Infosys, TCS), and real passenger feedback.")
+    doc.draw_bullet_point("Safety Shield & In-Trip HUD", "Mandatory dual ISI helmet confirmation, 4-digit start OTP (7842), and live GPS telemetry with active speedometer.")
+    
+    doc.draw_heading2("Offering 2: Host a Ride (Two-Wheeler Owner Flow)")
+    doc.draw_bullet_point("A. Inside City Commute (5 to 30 km)", "Host enters start and office destination -> system calculates fair fuel split (e.g. Rs 52.00) -> 5-minute live matching radar -> direct zero-commission wallet payout.")
+    doc.draw_bullet_point("B. City-to-City Highway (>30 km)", "Scheduled >=1 hour in advance (e.g. Indore to Bhopal, 195 km) with a dynamic seat price slider (Rs 260 - Rs 520), luggage limits, and planned refreshment halts.")
+    
+    doc.draw_heading1("4", "Target User Personas & Real-World Scenarios")
+    
+    persona_headers = ["Persona", "Profile & Route", "Pain Point", "RidePool Outcome"]
+    persona_rows = [
+        ["Rahul Sharma (28)\nCommuter Host", "Software Engineer at Infosys.\nMahalaxmi Nagar -> Scheme 54 (8.2 km)", "Spends Rs 3,500/mo on fuel. Refuses commercial taxi driving.", "Starts 5-min timer -> picks Ananya at bus stop -> earns Rs 52/day (saves Rs 1,400/mo)."],
+        ["Ananya K. (24)\nDaily Passenger", "IT Analyst at TCS.\nVijay Nagar -> Scheme 54 (8 km)", "Daily auto surge is Rs 160+; commercial cabs cancel.", "Books seat on verified bike for Rs 43 -> reaches office in 12 mins with ISI helmet."],
+        ["Vikram Joshi (31)\nHighway Rider", "Regional Sales Manager.\nIndore -> Bhopal Highway (195 km)", "Bus takes 4.5 hrs; private cabs cost Rs 2,800+.", "Shares seat on Royal Enfield Himalayan for Rs 360 -> splits fuel with verified peer."]
+    ]
+    doc.draw_table(persona_headers, persona_rows, col_widths=[95, 135, 135, 140])
+    
+    # -------------------------------------------------------------
+    # PAGE 3: PLATFORM ECONOMICS, GOVERNANCE & BUSINESS KPIS
+    # -------------------------------------------------------------
+    doc.start_new_page()
+    
+    doc.draw_heading1("5", "Platform Economics & Non-Commercial Cost Recovery")
+    doc.draw_paragraph(
+        "To ensure compliance with Indian Motor Vehicle guidelines and maintain a pure peer-to-peer cost-sharing model, Rapido RidePool operates on transparent cost recovery:"
     )
     
-    headers = ["Strategic Pillar", "Business Objective", "12-Month Target (OKR)"]
-    rows = [
-        ["Supply Liquidity", "Onboard verified white-plate commuter hosts", "150,000+ Active Hosts"],
-        ["Match Efficiency", "Instant corridor match within 5-min lead window", ">= 72% Match Rate"],
-        ["Zero-Detour SLA", "Strictly constrain host deviation from original path", "<= 400m average detour"],
-        ["Safety & Identity", "Enterprise email and DigiLocker verification", ">= 85% Verified Users"],
-        ["Gross Contribution", "Net platform take-rate per pooled seat", "14.5% - 16.0% Margin"]
-    ]
-    pdf.draw_table(headers, rows, col_widths=[110, 230, 165])
-    
-    # Section 3
-    pdf.draw_heading1("03", "Product Scope & Offering Architecture")
-    pdf.draw_paragraph(
-        "The ecosystem encompasses two dedicated host offerings and one unified corridor passenger discovery experience:"
+    doc.draw_callout_box(
+        "Pricing & Unit Economics Formula",
+        "Passenger Total Fare = Base Fuel Share [Rs 15 + (Distance x Rs 3.40/km)] + Platform Safety Fee (Rs 5.00)\n"
+        "* Zero Surge Policy: 100% immune to peak-hour or weather price surging.\n"
+        "* 100% Host Retention: Host receives the entire fuel cost share without commercial commission deductions.",
+        box_type="info"
     )
     
-    pdf.draw_heading2("Service Stream A: Rapido Commute (Intra-City 5km - 30km)")
-    pdf.draw_bullet_point("Distance Constraint", "Strictly bounded between 5 km and 30 km to serve genuine office tech-corridors.")
-    pdf.draw_bullet_point("Automated Cost-Sharing", "Rapido algorithm automatically calculates fair fuel-split fare (e.g. Rs 4.5/km + base). No surge pricing.")
-    pdf.draw_bullet_point("5-Minute Countdown SLA", "Host publishes ride with a 5-minute departure countdown; co-riders book directly along the route.")
-    pdf.draw_bullet_point("Corridor Landmark Hubs", "System snaps pick-up to major bus stops/metro gates on host path for zero detour.")
+    doc.draw_heading1("6", "Strategic Business KPIs for Rapido Leadership")
     
-    pdf.draw_heading2("Service Stream B: Rapido Highway (Inter-City City-to-City)")
-    pdf.draw_bullet_point("Distance Constraint", "Covering 30 km to 350 km (e.g., Bengaluru-Mysuru, Pune-Mumbai, Delhi-Jaipur).")
-    pdf.draw_bullet_point("Advance Scheduling", "Mandatory minimum 1 hour advance booking (scheduled up to 7 days ahead).")
-    pdf.draw_bullet_point("Host-Customized Pricing", "Host sets per-seat price within a regulated platform band (e.g., Rs 2.50 to Rs 4.00 per km).")
-    pdf.draw_bullet_point("Luggage & Gear Specs", "Explicit declaration of spare ISI helmet, max 1 backpack (<7kg), and planned rest halts.")
-    
-    pdf.draw_heading2("Service Stream C: Passenger Corridor Discovery ('Find a Shared Ride')")
-    pdf.draw_bullet_point("Corridor Search", "Passenger enters origin/drop; algorithm matches hosts passing within 400m of the path.")
-    pdf.draw_bullet_point("Host Comparison Matrix", "Shows verified corporate ID badges, safety ratings (4.9/5), bike model, walking distance, and price.")
-    
-    # Section 4
-    pdf.draw_heading1("04", "User Personas & Humanized Profiles")
-    
-    headers_p = ["Persona Profile", "Daily Travel Routine", "Core Pain Point", "Platform Value"]
-    rows_p = [
-        ["Rahul (27)\nIntra-City Host", "Senior Dev at Manyata Tech Park. Commutes 18km each way from HSR Layout.", "Spends Rs 4,500/mo on petrol. Hates commercial taxi detours.", "One-tap publish 5 mins before leaving; offsets 70% fuel with zero detour."],
-        ["Aniket (25)\nInter-City Host", "Product Designer traveling Pune to Mumbai (150km) on alternate weekends.", "High expressway tolls and petrol costs; solo riding gets exhausting.", "Schedule trips 2 days ahead, set fair seat rate, filter verified co-riders."],
-        ["Priya (23)\nCo-Rider Passenger", "Analyst traveling Indiranagar to Bellandur during peak rush hour.", "Auto surge (Rs 250+) and frequent cab cancellations.", "Safe, corporate-verified seat at Rs 65 (50% cheaper than cabs)."]
+    kpi_headers = ["Metric", "Baseline (Commercial)", "RidePool Target (6-Month)", "Strategic Value"]
+    kpi_rows = [
+        ["Daily Commute Trips", "~15k (organic misuse)", "150,000+ daily pooled trips", "Monetizes high-density tech park corridors."],
+        ["Personal Supply Onboarded", "0 (reluctant to do taxi)", "50,000+ verified bike owners", "Massive fleet expansion with zero acquisition cost."],
+        ["Corridor Cancellation Rate", "18% on commercial cabs", "< 3% on P2P commute pool", "High predictability and user trust."],
+        ["Carbon Footprint Offset", "N/A", "450+ metric tons CO2 / month", "Promotes sustainable green urban mobility."]
     ]
-    pdf.draw_table(headers_p, rows_p, col_widths=[105, 135, 135, 130])
+    doc.draw_table(kpi_headers, kpi_rows, col_widths=[110, 115, 140, 140])
     
-    # Section 5
-    pdf.draw_heading1("05", "Regulatory, Trust & Safety Framework")
-    pdf.draw_callout_box(
-        "Statutory Compliance Under MoRTH Guidelines",
-        "To comply with Central Motor Vehicle Carpooling Rules and protect private white-plate two-wheelers, the system strictly enforces a maximum of 2 shared rides per day per host and mandates pure cost-reimbursement pricing with zero commercial surge.",
+    doc.draw_callout_box(
+        "Executive Recommendation",
+        "Launch Rapido RidePool as a hero tab in top tech corridors (Indore AB Road, Bengaluru ORR, Hyderabad HITEC City). Pair with the live interactive prototype to validate pilot launch.",
         box_type="success"
     )
-    pdf.draw_bullet_point("Corporate Email & ID Auth", "Two-step verification using company email (@company.com) and DigiLocker/Aadhaar integration.")
-    pdf.draw_bullet_point("Rapido Pink Pool", "Women-only commute toggle allowing female hosts and co-riders to match exclusively with women.")
-    pdf.draw_bullet_point("Mandatory Dual Helmet", "In-app pre-trip confirmation that both host and passenger possess ISI-certified helmets.")
-    pdf.draw_bullet_point("Integrated Micro-Insurance", "Rs 5,00,000 personal accident cover automatically embedded into every pooled booking.")
     
-    # Section 6
-    pdf.draw_heading1("06", "Financial Model & Unit Economics")
-    
-    headers_econ = ["Metric Component", "Intra-City Pool (15 km)", "Inter-City Highway (150 km)"]
-    rows_econ = [
-        ["Passenger Total Price", "Rs 85.00 (vs Rs 180 auto)", "Rs 420.00 (vs Rs 750 bus)"],
-        ["Host Fuel Reimbursement", "Rs 72.00 (Direct UPI payout)", "Rs 360.00 (Direct UPI payout)"],
-        ["Rapido Platform Margin", "Rs 11.50 (13.5% take rate)", "Rs 55.00 (13.1% take rate)"],
-        ["Micro-Insurance & Support", "Rs 1.50 per seat", "Rs 5.00 per seat"],
-        ["Net Unit Margin per Ride", "Rs 11.50 (Zero CAC Burn)", "Rs 50.00 (Zero CAC Burn)"]
-    ]
-    pdf.draw_table(headers_econ, rows_econ, col_widths=[165, 170, 170])
-    
-    # Section 7
-    pdf.draw_heading1("07", "Business Risks & Mitigation Matrix")
-    headers_risk = ["Identified Risk", "Severity", "Strategic Mitigation Plan"]
-    rows_risk = [
-        ["Commercial Taxi Union Pushback", "High", "Strictly enforce 2 trips/day limit and non-surge fuel cost recovery to maintain non-commercial legal classification."],
-        ["Host Late Dropouts / No-Shows", "Medium", "Implement Host Reliability Score. Late cancellations deduct reward points and freeze peak hosting privileges."],
-        ["Off-Corridor Detour Disputes", "Medium", "Enforce predefined Corridor Pickup Landmarks (Metro gates, bus stops). Co-riders must walk to host path."],
-        ["Highway High-Speed Safety", "High", "Mandate intercity gear verification (helmets/jackets), speed telemetry alerts (>90 km/h), and 24/7 SOS dispatch."]
-    ]
-    pdf.draw_table(headers_risk, rows_risk, col_widths=[140, 65, 300])
-    
-    # Section 8
-    pdf.draw_heading1("08", "Phased Go-To-Market Roadmap")
-    headers_gtm = ["Phase & Focus", "Timeline", "Target Corridors", "Success Target"]
-    rows_gtm = [
-        ["Phase 1: IT Corridor Pilot", "Weeks 1 - 6", "Outer Ring Road & Electronic City, Blr", "10,000 corporate rides; >=65% match"],
-        ["Phase 2: Metro Expansion", "Weeks 7 - 14", "Bengaluru, Hyderabad, Pune, Delhi-NCR", "75,000 weekly pooled rides"],
-        ["Phase 3: Highway Launch", "Weeks 15 - 22", "Top 15 Intercity Routes (Blr-Mys, Pune-Mum)", "2,500 weekend highway trips"],
-        ["Phase 4: Enterprise Pass", "Weeks 23+", "SEZ Tech Parks (Infosys, Ecospace, Cyber City)", "Direct corporate payroll integration"]
-    ]
-    pdf.draw_table(headers_gtm, rows_gtm, col_widths=[125, 80, 165, 135])
-    
-    output_pdf = "/Users/abhigya3750/Downloads/Antigravitiy Workspace /Rapido project/Rapido_Bikepool_BRD.pdf"
-    pdf.save(output_pdf)
-    return output_pdf
+    doc.save(output_path)
 
 if __name__ == "__main__":
-    generate_brd()
+    out = os.path.join(os.path.dirname(__file__), "Rapido_Bikepool_BRD.pdf")
+    build_brd_pdf(out)

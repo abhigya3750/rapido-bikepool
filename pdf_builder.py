@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Lightweight, zero-dependency PDF generator for Executive BRD & PRD documents.
-Converts structured document sections into standard PDF 1.4.
+Converts structured document sections into standard PDF 1.4 with corporate typography.
 """
 
 import sys
@@ -54,99 +54,111 @@ class PDFDoc:
             self.start_new_page()
 
     def _escape(self, text):
-        return text.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+        if not text:
+            return ""
+        # Clean unicode characters to latin-1 compatible equivalents
+        clean = str(text)
+        clean = clean.replace('—', '--').replace('–', '-')
+        clean = clean.replace('“', '"').replace('”', '"')
+        clean = clean.replace('‘', "'").replace('’', "'")
+        clean = clean.replace('₹', 'Rs ').replace('•', '-')
+        clean = clean.replace('➔', '->').replace('✓', '[v]')
+        clean = clean.replace('⭐', '*').replace('🏍️', '').replace('🛵', '').replace('🪖', '').replace('⚡', '')
+        clean = clean.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
+        # Filter any remaining non-ascii
+        return clean.encode('ascii', 'replace').decode('ascii')
 
     def draw_header_banner(self, doc_type, main_title, subtitle, meta_items):
         self._check_page_break(110)
         stream = []
         
         # Brand top bar
-        stream.append("1.0 0.87 0.0 rg\n") # Rapido Yellow #FFDF00
+        stream.append("1.0 0.77 0.0 rg\n") # Rapido Golden Yellow
         stream.append(f"{self.margin_x} {self.cursor_y - 4} {self.content_w} 4 re f\n")
         self.cursor_y -= 14
         
         # Document Type Badge
         badge_text = doc_type.upper()
         stream.append("0.06 0.09 0.16 rg\n") # Dark Slate #0F172A
-        stream.append(f"{self.margin_x} {self.cursor_y - 14} 160 14 re f\n")
-        stream.append("1.0 0.87 0.0 rg\n") # Yellow text
-        stream.append("BT\n/F2 8 Tf\n")
+        stream.append(f"{self.margin_x} {self.cursor_y - 14} 185 14 re f\n")
+        stream.append("1.0 0.77 0.0 rg\n") # Yellow text
+        stream.append("BT\n/F2 7.5 Tf\n")
         stream.append(f"{self.margin_x + 8} {self.cursor_y - 10} Td ({self._escape(badge_text)}) Tj\n")
         stream.append("ET\n")
         self.cursor_y -= 22
         
         # Main Title
         stream.append("0.06 0.09 0.16 rg\n")
-        stream.append("BT\n/F2 18 Tf\n")
+        stream.append("BT\n/F2 16.5 Tf\n")
         stream.append(f"{self.margin_x} {self.cursor_y - 14} Td ({self._escape(main_title)}) Tj\n")
         stream.append("ET\n")
-        self.cursor_y -= 22
+        self.cursor_y -= 20
         
         # Subtitle
         stream.append("0.35 0.42 0.52 rg\n")
-        stream.append("BT\n/F1 10.5 Tf\n")
+        stream.append("BT\n/F1 10.0 Tf\n")
         stream.append(f"{self.margin_x} {self.cursor_y - 10} Td ({self._escape(subtitle)}) Tj\n")
         stream.append("ET\n")
         self.cursor_y -= 18
         
         # Meta Box
         stream.append("0.97 0.98 0.99 rg 0.88 0.91 0.94 RG 0.8 w\n")
-        stream.append(f"{self.margin_x} {self.cursor_y - 26} {self.content_w} 26 re B\n")
+        stream.append(f"{self.margin_x} {self.cursor_y - 24} {self.content_w} 24 re B\n")
         
         col_w = self.content_w / len(meta_items)
         for i, (lbl, val) in enumerate(meta_items):
             bx = self.margin_x + (i * col_w) + 8
             stream.append("0.55 0.62 0.72 rg\n")
-            stream.append("BT\n/F2 7 Tf\n")
-            stream.append(f"{bx} {self.cursor_y - 10} Td ({self._escape(lbl.upper())}) Tj\n")
+            stream.append("BT\n/F2 6.5 Tf\n")
+            stream.append(f"{bx} {self.cursor_y - 9} Td ({self._escape(lbl.upper())}) Tj\n")
             stream.append("ET\n")
             
             stream.append("0.06 0.09 0.16 rg\n")
-            stream.append("BT\n/F2 8.5 Tf\n")
-            stream.append(f"{bx} {self.cursor_y - 20} Td ({self._escape(val)}) Tj\n")
+            stream.append("BT\n/F2 8.0 Tf\n")
+            stream.append(f"{bx} {self.cursor_y - 18} Td ({self._escape(val)}) Tj\n")
             stream.append("ET\n")
             
-        self.cursor_y -= 36
+        self.cursor_y -= 34
         self.current_page_stream.append("".join(stream))
 
     def draw_heading1(self, num_str, title_str):
-        self._check_page_break(42)
+        self._check_page_break(40)
         stream = []
-        self.cursor_y -= 10
+        self.cursor_y -= 8
         
         # Number pill
-        stream.append("1.0 0.87 0.0 rg\n") # Yellow pill
-        stream.append(f"{self.margin_x} {self.cursor_y - 14} 24 15 re f\n")
+        stream.append("1.0 0.77 0.0 rg\n") # Yellow pill
+        stream.append(f"{self.margin_x} {self.cursor_y - 13} 20 14 re f\n")
         stream.append("0.0 0.0 0.0 rg\n")
-        stream.append("BT\n/F2 9.5 Tf\n")
-        stream.append(f"{self.margin_x + 5} {self.cursor_y - 10} Td ({self._escape(num_str)}) Tj\n")
+        stream.append("BT\n/F2 8.5 Tf\n")
+        stream.append(f"{self.margin_x + 5} {self.cursor_y - 9} Td ({self._escape(num_str)}) Tj\n")
         stream.append("ET\n")
         
         # Title text
         stream.append("0.06 0.09 0.16 rg\n")
-        stream.append("BT\n/F2 13 Tf\n")
-        stream.append(f"{self.margin_x + 32} {self.cursor_y - 10} Td ({self._escape(title_str)}) Tj\n")
+        stream.append("BT\n/F2 12 Tf\n")
+        stream.append(f"{self.margin_x + 28} {self.cursor_y - 9} Td ({self._escape(title_str)}) Tj\n")
         stream.append("ET\n")
         
         # Underline
-        stream.append("0.88 0.91 0.94 RG 1.0 w\n")
-        stream.append(f"{self.margin_x} {self.cursor_y - 18} m {self.margin_x + self.content_w} {self.cursor_y - 18} l S\n")
+        stream.append("0.88 0.91 0.94 RG 0.8 w\n")
+        stream.append(f"{self.margin_x} {self.cursor_y - 16} m {self.margin_x + self.content_w} {self.cursor_y - 16} l S\n")
         
-        self.cursor_y -= 26
+        self.cursor_y -= 24
         self.current_page_stream.append("".join(stream))
 
     def draw_heading2(self, title_str):
-        self._check_page_break(28)
+        self._check_page_break(26)
         stream = []
-        self.cursor_y -= 6
+        self.cursor_y -= 4
         stream.append("0.12 0.16 0.24 rg\n")
-        stream.append("BT\n/F2 11 Tf\n")
-        stream.append(f"{self.margin_x} {self.cursor_y - 9} Td ({self._escape(title_str)}) Tj\n")
+        stream.append("BT\n/F2 10.5 Tf\n")
+        stream.append(f"{self.margin_x} {self.cursor_y - 8} Td ({self._escape(title_str)}) Tj\n")
         stream.append("ET\n")
-        self.cursor_y -= 16
+        self.cursor_y -= 14
         self.current_page_stream.append("".join(stream))
 
-    def draw_paragraph(self, text, font_size=9.5, color=(0.15, 0.20, 0.28)):
+    def draw_paragraph(self, text, font_size=9.0, color=(0.15, 0.20, 0.28)):
         words = text.split()
         lines = []
         cur_line = []
@@ -162,7 +174,7 @@ class PDFDoc:
             lines.append(" ".join(cur_line))
             
         line_h = font_size * 1.35
-        total_h = len(lines) * line_h + 6
+        total_h = len(lines) * line_h + 4
         self._check_page_break(total_h)
         
         stream = [f"{color[0]} {color[1]} {color[2]} rg\n"]
@@ -176,7 +188,7 @@ class PDFDoc:
         self.cursor_y -= 4
         self.current_page_stream.append("".join(stream))
 
-    def draw_bullet_point(self, title, text, font_size=9.0):
+    def draw_bullet_point(self, title, text, font_size=8.5):
         combined = f"{title}: {text}" if title else text
         words = combined.split()
         lines = []
@@ -225,7 +237,7 @@ class PDFDoc:
         words = text.split()
         lines = []
         cur_line = []
-        max_chars = int((self.content_w - 24) / (8.5 * 0.52))
+        max_chars = int((self.content_w - 24) / (8.0 * 0.52))
         for w in words:
             if len(" ".join(cur_line + [w])) <= max_chars:
                 cur_line.append(w)
@@ -235,8 +247,8 @@ class PDFDoc:
         if cur_line:
             lines.append(" ".join(cur_line))
             
-        box_h = 24 + len(lines) * 11.5 + 8
-        self._check_page_break(box_h + 8)
+        box_h = 20 + len(lines) * 10.5 + 6
+        self._check_page_break(box_h + 6)
         
         stream = []
         # Box background
@@ -252,20 +264,20 @@ class PDFDoc:
         # Title
         tt = colors["title"]
         stream.append(f"{tt[0]} {tt[1]} {tt[2]} rg\n")
-        stream.append("BT\n/F2 9.5 Tf\n")
-        stream.append(f"{self.margin_x + 12} {self.cursor_y - 14} Td ({self._escape(title)}) Tj\n")
+        stream.append("BT\n/F2 9.0 Tf\n")
+        stream.append(f"{self.margin_x + 12} {self.cursor_y - 12} Td ({self._escape(title)}) Tj\n")
         stream.append("ET\n")
         
         # Text lines
         stream.append("0.20 0.26 0.35 rg\n")
-        curr_y = self.cursor_y - 25
+        curr_y = self.cursor_y - 22
         for line in lines:
-            stream.append("BT\n/F1 8.5 Tf\n")
+            stream.append("BT\n/F1 8.0 Tf\n")
             stream.append(f"{self.margin_x + 12} {curr_y} Td ({self._escape(line)}) Tj\n")
             stream.append("ET\n")
-            curr_y -= 11.5
+            curr_y -= 10.5
             
-        self.cursor_y -= (box_h + 8)
+        self.cursor_y -= (box_h + 6)
         self.current_page_stream.append("".join(stream))
 
     def draw_table(self, headers, rows, col_widths=None):
@@ -282,7 +294,7 @@ class PDFDoc:
             cell_lines_list = []
             for idx, cell in enumerate(row):
                 w = col_widths[idx]
-                max_c = max(10, int((w - 10) / (8.0 * 0.50)))
+                max_c = max(10, int((w - 10) / (7.5 * 0.50)))
                 words = str(cell).split()
                 lines = []
                 cur = []
@@ -297,26 +309,26 @@ class PDFDoc:
                 cell_lines_list.append(lines if lines else [""])
                 max_lines = max(max_lines, len(lines))
             parsed_rows.append(cell_lines_list)
-            row_heights.append(max(18, max_lines * 10.5 + 8))
+            row_heights.append(max(16, max_lines * 9.5 + 6))
             
-        total_table_h = 22 + sum(row_heights) + 10
-        self._check_page_break(min(total_table_h, 80)) # Ensure at least header + first row fits
+        total_table_h = 18 + sum(row_heights) + 8
+        self._check_page_break(min(total_table_h, 75))
         
         stream = []
         # Header background
         stream.append("0.06 0.09 0.16 rg\n")
-        stream.append(f"{self.margin_x} {self.cursor_y - 20} {self.content_w} 20 re f\n")
+        stream.append(f"{self.margin_x} {self.cursor_y - 18} {self.content_w} 18 re f\n")
         
         # Header text
         stream.append("1.0 1.0 1.0 rg\n")
         cur_x = self.margin_x
         for i, h in enumerate(headers):
-            stream.append("BT\n/F2 8.5 Tf\n")
-            stream.append(f"{cur_x + 6} {self.cursor_y - 13} Td ({self._escape(h)}) Tj\n")
+            stream.append("BT\n/F2 8.0 Tf\n")
+            stream.append(f"{cur_x + 6} {self.cursor_y - 12} Td ({self._escape(h)}) Tj\n")
             stream.append("ET\n")
             cur_x += col_widths[i]
             
-        self.cursor_y -= 20
+        self.cursor_y -= 18
         
         # Rows
         for r_idx, r_data in enumerate(parsed_rows):
@@ -335,17 +347,17 @@ class PDFDoc:
             cur_x = self.margin_x
             for c_idx, lines in enumerate(r_data):
                 stream.append("0.15 0.20 0.28 rg\n")
-                line_y = self.cursor_y - 11
+                line_y = self.cursor_y - 10
                 for ln in lines:
-                    stream.append("BT\n/F1 8.0 Tf\n")
+                    stream.append("BT\n/F1 7.5 Tf\n")
                     stream.append(f"{cur_x + 6} {line_y} Td ({self._escape(ln)}) Tj\n")
                     stream.append("ET\n")
-                    line_y -= 10.0
+                    line_y -= 9.5
                 cur_x += col_widths[c_idx]
                 
             self.cursor_y -= rh
             
-        self.cursor_y -= 8
+        self.cursor_y -= 6
         self.current_page_stream.append("".join(stream))
 
     def save(self, filepath):
