@@ -226,7 +226,7 @@ html, body {
   padding: 8px 18px calc(24px + var(--safe-bottom)) 18px;
   box-shadow: var(--shadow-sheet);
   z-index: 50;
-  max-height: calc(82dvh - var(--safe-top));
+  max-height: calc(84dvh - var(--safe-top));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -509,6 +509,241 @@ html, body {
 }
 
 /* ========================================================
+   HOST ONBOARDING FLOW STYLES (NEW)
+   ======================================================== */
+.onboarding-stepper-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.step-pill {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.step-pill.active {
+  background: #FEF08A;
+  border-color: var(--rapido-yellow);
+  color: #0F172A;
+  font-weight: 800;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #E2E8F0;
+}
+
+.ob-section-heading {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748B;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.vehicle-type-selector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.v-type-card {
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.v-type-card.active {
+  border-color: var(--rapido-yellow);
+  background: #FFFBEB;
+  box-shadow: 0 2px 10px rgba(255, 196, 0, 0.2);
+}
+
+.v-type-icon {
+  font-size: 28px;
+  margin-bottom: 2px;
+}
+
+.v-type-label {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--rapido-dark);
+}
+
+.ob-input-group {
+  margin-bottom: 12px;
+}
+
+.ob-field-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ob-select-input, .ob-text-input {
+  width: 100%;
+  height: 42px;
+  background: #F8FAFC;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rapido-dark);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ob-select-input:focus, .ob-text-input:focus {
+  border-color: var(--rapido-yellow);
+}
+
+.ob-text-input.uppercase {
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+.digilocker-badge-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F0FDF4;
+  border: 1.5px solid #86EFAC;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.dl-badge-icon {
+  font-size: 26px;
+}
+
+.dl-badge-text strong {
+  font-size: 13px;
+  color: #166534;
+  display: block;
+}
+
+.dl-badge-text p {
+  font-size: 11px;
+  color: #475569;
+}
+
+.mono-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+}
+
+.verified-green-check {
+  font-size: 10px;
+  font-weight: 800;
+  background: #DCFCE7;
+  color: #166534;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.safety-declaration-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ========================================================
+   LOCATION SUGGESTIONS / AUTOCOMPLETE (NEW)
+   ======================================================== */
+.location-suggestions-container {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.suggestion-header-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.suggestion-item:hover {
+  background: #F1F5F9;
+}
+
+.sugg-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.sugg-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sugg-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--rapido-dark);
+}
+
+.sugg-sub {
+  font-size: 10.5px;
+  color: #64748B;
+}
+
+.sugg-dist-tag {
+  font-size: 10px;
+  font-weight: 800;
+  background: #F1F5F9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #334155;
+}
+
+/* ========================================================
    HOST MODE PICKER & SAVINGS BANNER
    ======================================================== */
 .host-savings-banner {
@@ -717,7 +952,7 @@ html, body {
 .route-quick-switch-pills {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .switch-pill {
@@ -1173,7 +1408,7 @@ html, body {
 }
 
 /* ========================================================
-   HOST JOURNEY NEW STYLES (Pickup Nav, OTP, In-Trip, Dashboard)
+   HOST JOURNEY (Pickup Nav, OTP, In-Trip, Dashboard)
    ======================================================== */
 .pickup-target-banner {
   display: flex;
@@ -1231,12 +1466,39 @@ html, body {
   text-align: center;
   color: var(--rapido-dark);
   outline: none;
+  transition: all 0.15s;
+}
+
+.otp-digit:focus {
+  border-color: #0F172A;
+  background: #FFFBEB;
+  box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.3);
 }
 
 .quick-fill-otp-note {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   color: #64748B;
+}
+
+.quick-fill-otp-btn {
+  background: #FEF08A;
+  border: 1px solid var(--rapido-yellow);
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  color: #854D0E;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.quick-fill-otp-btn:active {
+  transform: scale(0.95);
 }
 
 .highway-trip-summary-box {
@@ -1920,6 +2182,133 @@ html, body {
   font-size: 22px;
   font-weight: 900;
   color: var(--rapido-dark);
+}
+
+/* ========================================================
+   CALL SCREEN SIMULATOR MODAL (NEW)
+   ======================================================== */
+.call-dialog-container {
+  width: 100%;
+  background: #0F172A;
+  color: #FFFFFF;
+  border-radius: 26px 26px 0 0;
+  padding: 24px 20px calc(36px + var(--safe-bottom)) 20px;
+  text-align: center;
+  animation: slideUp 0.25s ease-out;
+}
+
+.safe-dial-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--rapido-yellow);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.call-avatar-pulse-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 196, 0, 0.2);
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulseCall 1.5s infinite;
+}
+
+@keyframes pulseCall {
+  0% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0.6); }
+  70% { box-shadow: 0 0 0 16px rgba(255, 196, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0); }
+}
+
+.call-avatar-big {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--rapido-yellow);
+  color: #0F172A;
+  font-size: 22px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.call-contact-name {
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.call-contact-sub {
+  font-size: 12px;
+  color: #94A3B8;
+  margin-bottom: 10px;
+}
+
+.call-status-timer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #34D399;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.call-controls-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.call-action-circle-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #FFFFFF;
+}
+
+.call-action-circle-btn.active {
+  background: #FFFFFF;
+  color: #0F172A;
+}
+
+.call-end-circle-btn {
+  background: #DC2626;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+
+.ctrl-icon {
+  font-size: 18px;
+}
+
+.ctrl-lbl {
+  font-size: 8.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-top: 2px;
 }
 
 /* SAFETY SHIELD MODAL */

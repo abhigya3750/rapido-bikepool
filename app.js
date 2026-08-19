@@ -1,4 +1,4 @@
-// Rapido Bikepool & Highway - Senior UX Interaction Architecture
+// Rapido Bikepool & Highway - Production UX Interaction Architecture
 
 let map;
 let pickupMarker;
@@ -11,9 +11,11 @@ let tripTimerInterval = null;
 let hostTripTimerInterval = null;
 let speedSimInterval = null;
 let hostSpeedSimInterval = null;
+let callTimerInterval = null;
 
 let tripLiveSeconds = 0;
 let hostLiveSeconds = 0;
+let callLiveSeconds = 0;
 let selectedPayment = 'Cash';
 let currentFare = 43;
 let currentDistKm = 8.2;
@@ -21,17 +23,96 @@ let selectedRating = 5;
 let hostSelectedRating = 5;
 let pendingHostBookingIndex = 1;
 let currentRouteType = 'city'; // 'city' (<=30km) or 'highway' (>30km)
+let hostIsOnboarded = false; // State of Host Onboarding
+
+// User & Host Registered Profile
+let hostProfile = {
+  vehicleType: 'Motorcycle',
+  vehicleModel: 'Royal Enfield Hunter 350 (Blue)',
+  plateNumber: 'MP 09 AB 7842',
+  dlNumber: 'DL-092021008742',
+  hasSpareHelmet: true
+};
+
+// Location database with real coordinates
+const POPULAR_LOCATIONS = [
+  {
+    name: "722, Sector R, Mahalaxmi Nagar, Indore",
+    sub: "Residential Hub · Mahalaxmi Nagar",
+    coords: [22.7533, 75.8937],
+    icon: "🏠",
+    type: "city",
+    distFromDefault: 0.0
+  },
+  {
+    name: "Savitri Empire, Scheme No 54, Indore",
+    sub: "Tech Park & Commercial Hub · Scheme 54",
+    coords: [22.7441, 75.8821],
+    icon: "🏢",
+    type: "city",
+    distFromDefault: 8.2
+  },
+  {
+    name: "Vijay Nagar Square (C21 Mall / Bus Stop)",
+    sub: "Major Transit Hub · AB Road Corridor",
+    coords: [22.7536, 75.8935],
+    icon: "📍",
+    type: "city",
+    distFromDefault: 2.4
+  },
+  {
+    name: "Palasia Square (Industry House, Indore)",
+    sub: "Central Business District · AB Road",
+    coords: [22.7244, 75.8839],
+    icon: "🏢",
+    type: "city",
+    distFromDefault: 6.8
+  },
+  {
+    name: "Bhawarkua Square (University Hub, Indore)",
+    sub: "Student & Coaching Corridor · BRTS",
+    coords: [22.6931, 75.8665],
+    icon: "🎓",
+    type: "city",
+    distFromDefault: 12.5
+  },
+  {
+    name: "Rajwada Palace (City Center Market, Indore)",
+    sub: "Historic Central Commercial Area",
+    coords: [22.7196, 75.8577],
+    icon: "🛍️",
+    type: "city",
+    distFromDefault: 9.4
+  },
+  {
+    name: "Bhopal (ISBT Bus Terminal Hub)",
+    sub: "Intercity Highway Corridor · 195 km",
+    coords: [23.2599, 77.4126],
+    icon: "🛣️",
+    type: "highway",
+    distFromDefault: 195.0
+  },
+  {
+    name: "Ujjain (Mahakal Bypass Corridor)",
+    sub: "Intercity Highway Corridor · 55 km",
+    coords: [23.1765, 75.7885],
+    icon: "🛣️",
+    type: "highway",
+    distFromDefault: 55.0
+  }
+];
 
 // Navigation Stack for smooth back transitions
 let navigationStack = ['sheet-home'];
 
 // Coordinates
-const defaultPickup = [22.7533, 75.8937]; // Sector R, Mahalaxmi Nagar
-const defaultDrop = [22.7441, 75.8821];   // Scheme No 54, Savitri Empire
+let defaultPickup = [22.7533, 75.8937]; // Sector R, Mahalaxmi Nagar
+let defaultDrop = [22.7441, 75.8821];   // Scheme No 54, Savitri Empire
 const highwayDrop = [23.2599, 77.4126];   // Bhopal
 
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
+  initOtpInputs();
   goHome();
 });
 
@@ -162,11 +243,80 @@ function hideAllSheets() {
 }
 
 // ========================================================
-// 3. PASSENGER FLOW: UNIFIED CITY & HIGHWAY RIDESHARE
+// 3. RAPIDO HOST ONBOARDING FLOW (QUICK 1-MIN SETUP)
+// ========================================================
+
+function openHostFlow() {
+  if (!hostIsOnboarded) {
+    // Open quick host onboarding first
+    goToOnboardingStep(1);
+    navigateTo('sheet-host-onboarding');
+  } else {
+    openHostModeSelector();
+  }
+}
+
+function selectVehicleType(type) {
+  hostProfile.vehicleType = type;
+  document.getElementById('v-type-motorcycle').classList.toggle('active', type === 'Motorcycle');
+  document.getElementById('v-type-scooter').classList.toggle('active', type === 'Scooter');
+
+  const modelSelect = document.getElementById('ob-vehicle-model');
+  if (type === 'Scooter') {
+    modelSelect.value = 'Honda Activa 6G (Grey)';
+  } else {
+    modelSelect.value = 'Royal Enfield Hunter 350 (Blue)';
+  }
+}
+
+function goToOnboardingStep(step) {
+  if (step === 1) {
+    document.getElementById('ob-step-1-content').style.display = 'block';
+    document.getElementById('ob-step-2-content').style.display = 'none';
+    document.getElementById('ob-step-1-pill').classList.add('active');
+    document.getElementById('ob-step-2-pill').classList.remove('active');
+  } else {
+    const plate = document.getElementById('ob-plate-number').value.trim();
+    if (!plate) {
+      alert("Please enter your vehicle registration plate number (e.g. MP 09 AB 1234)");
+      return;
+    }
+    hostProfile.vehicleModel = document.getElementById('ob-vehicle-model').value;
+    hostProfile.plateNumber = plate.toUpperCase();
+
+    document.getElementById('ob-step-1-content').style.display = 'none';
+    document.getElementById('ob-step-2-content').style.display = 'block';
+    document.getElementById('ob-step-1-pill').classList.remove('active');
+    document.getElementById('ob-step-2-pill').classList.add('active');
+  }
+}
+
+function completeHostOnboarding() {
+  const helmetChecked = document.getElementById('ob-chk-helmet').checked;
+  if (!helmetChecked) {
+    alert("Please confirm that you have a spare ISI-approved helmet for your co-rider.");
+    return;
+  }
+
+  hostIsOnboarded = true;
+  hostProfile.hasSpareHelmet = true;
+
+  // Update vehicle summary on host picker
+  document.getElementById('host-picker-vehicle-summary').innerText = 
+    `Hosting with ${hostProfile.vehicleModel} (${hostProfile.plateNumber})`;
+
+  alert(`🎉 Host Setup Complete!\n\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\nDL Status: Verified via DigiLocker ✅\n\nYou are now ready to offer empty seats and split fuel!`);
+
+  openHostModeSelector();
+}
+
+// ========================================================
+// 4. PASSENGER FLOW: UNIFIED CITY & HIGHWAY RIDESHARE
 // ========================================================
 
 function startShareRideFlow() {
   navigateTo('sheet-passenger-search');
+  showLocationSuggestions('passenger-drop');
 }
 
 function setPassengerRouteType(type) {
@@ -181,6 +331,8 @@ function setPassengerRouteType(type) {
     document.getElementById('search-mode-tag').innerText = "Inside City (8.2 km)";
     document.getElementById('search-mode-tag').className = "badge-tag green";
     currentDistKm = 8.2;
+    defaultPickup = [22.7533, 75.8937];
+    defaultDrop = [22.7441, 75.8821];
     drawRoute(defaultPickup, defaultDrop);
   } else {
     if (pills[1]) pills[1].classList.add('active');
@@ -189,6 +341,7 @@ function setPassengerRouteType(type) {
     document.getElementById('search-mode-tag').innerText = "Highway (>30 km)";
     document.getElementById('search-mode-tag').className = "badge-tag purple";
     currentDistKm = 195.0;
+    defaultPickup = [22.7536, 75.8935];
     drawRoute(defaultPickup, highwayDrop);
   }
 }
@@ -215,7 +368,6 @@ function goToPassengerPickupCheck() {
 }
 
 function confirmPickupAndDiscoverHosts() {
-  // Render matching hosts dynamically based on City (<=30km) vs Highway (>30km)
   renderMatchingHostsList();
   navigateTo('sheet-passenger-discovery');
 }
@@ -225,7 +377,7 @@ function renderMatchingHostsList() {
   
   if (currentDistKm <= 30) {
     // INSIDE CITY COMMUTE (5-30 km)
-    currentFare = 43;
+    currentFare = Math.round(15 + (currentDistKm * 3.4) + 5);
     document.getElementById('discovery-title').innerText = "Hosts Heading Your Way";
     document.getElementById('discovery-corridor-summary').innerText = `Calculated for ${currentDistKm} km daily commute`;
     document.getElementById('waiting-service-type-name').innerText = "Bikepool Commute";
@@ -242,13 +394,13 @@ function renderMatchingHostsList() {
                 <span class="host-rating">⭐ 4.9 (48)</span>
               </div>
               <div class="host-badge-row">
-                <span class="trust-badge corporate">Verified Infosys</span>
+                <span class="trust-badge corporate">Verified Commuter</span>
                 <span class="trust-badge helmet">Extra Helmet</span>
               </div>
             </div>
           </div>
           <div class="host-price-right" onclick="openFareBreakdown(event)">
-            <div class="host-price">₹43</div>
+            <div class="host-price">₹${currentFare}</div>
             <div class="host-old-price">₹140 on Taxi ℹ️</div>
           </div>
         </div>
@@ -263,11 +415,11 @@ function renderMatchingHostsList() {
         </div>
 
         <div class="card-actions-row">
-          <button class="view-reviews-btn" onclick="openHostReviewsModal('Rahul Sharma', '4.9', '48', 'Royal Enfield Hunter 350', 'Verified Infosys Commuter', event)">
+          <button class="view-reviews-btn" onclick="openHostReviewsModal('Rahul Sharma', '4.9', '48', 'Royal Enfield Hunter 350', 'Verified Commuter', event)">
             👤 View Profile & Reviews
           </button>
           <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(1, event)">
-            Choose Rider · ₹43
+            Choose Rider · ₹${currentFare}
           </button>
         </div>
       </div>
@@ -289,7 +441,7 @@ function renderMatchingHostsList() {
             </div>
           </div>
           <div class="host-price-right" onclick="openFareBreakdown(event)">
-            <div class="host-price">₹40</div>
+            <div class="host-price">₹${currentFare - 3}</div>
             <div class="host-old-price">₹140 on Taxi ℹ️</div>
           </div>
         </div>
@@ -308,7 +460,7 @@ function renderMatchingHostsList() {
             👤 View Profile & Reviews
           </button>
           <button class="rapido-primary-btn sm-btn select-rider-btn" onclick="promptSafetyAndBookHost(2, event)">
-            Choose Rider · ₹40
+            Choose Rider · ₹${currentFare - 3}
           </button>
         </div>
       </div>
@@ -316,7 +468,7 @@ function renderMatchingHostsList() {
   } else {
     // HIGHWAY INTERCITY (>30 km)
     currentFare = 360;
-    document.getElementById('discovery-title').innerText = "Highway Rides to Bhopal";
+    document.getElementById('discovery-title').innerText = "Highway Rides to Destination";
     document.getElementById('discovery-corridor-summary').innerText = `Calculated for ${currentDistKm} km Highway Corridor`;
     document.getElementById('waiting-service-type-name').innerText = "Highway Intercity RideShare";
 
@@ -332,7 +484,7 @@ function renderMatchingHostsList() {
                 <span class="host-rating">⭐ 4.9 (48)</span>
               </div>
               <div class="host-badge-row">
-                <span class="trust-badge corporate">Verified Infosys</span>
+                <span class="trust-badge corporate">Verified Commuter</span>
                 <span class="trust-badge highway">Highway Certified</span>
               </div>
             </div>
@@ -373,7 +525,7 @@ function renderMatchingHostsList() {
                 <span class="host-rating">⭐ 4.8 (29)</span>
               </div>
               <div class="host-badge-row">
-                <span class="trust-badge corporate">Verified Wipro</span>
+                <span class="trust-badge corporate">Verified Commuter</span>
                 <span class="trust-badge helmet">ISI Helmet</span>
               </div>
             </div>
@@ -479,7 +631,7 @@ function simulateBikeMovement() {
     iconAnchor: [18, 18]
   });
 
-  const startCoord = [22.7500, 75.8900];
+  const startCoord = defaultPickup;
   movingBikeMarker = L.marker(startCoord, { icon: bikeIcon }).addTo(map);
 
   let step = 0;
@@ -540,7 +692,7 @@ function submitReviewAndFinish() {
 }
 
 // ========================================================
-// 4. COMPLETE HOST FLOW A: INSIDE THE CITY (5–30 KM)
+// 5. COMPLETE HOST FLOW A: INSIDE THE CITY (5–30 KM)
 // ========================================================
 
 function openHostModeSelector() {
@@ -562,7 +714,7 @@ function calculateHostRouteAndFare() {
     return;
   }
 
-  const distKm = 8.2;
+  const distKm = currentDistKm || 8.2;
   const fare = Math.round(15 + (distKm * 4.5));
   document.getElementById('host-fare-calc').innerText = `₹${fare}.00`;
   document.getElementById('host-distance-text').innerText = `Distance: ${distKm} km (Valid: 5 to 30 km Range)`;
@@ -604,13 +756,40 @@ function startHost5MinCountdown() {
 
 function hostAcceptPassenger() {
   clearInterval(countdownInterval);
-  // Transition to Host Pickup Navigation Screen
   navigateTo('sheet-host-pickup-nav');
 }
 
 function hostArrivedAtPickup() {
-  // Transition to OTP Verification Screen
   navigateTo('sheet-host-otp-verify');
+  initOtpInputs();
+}
+
+function initOtpInputs() {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`otp-digit-${i}`);
+    if (el) el.value = '';
+  }
+}
+
+function handleOtpKey(digitIndex, event) {
+  const currentInput = document.getElementById(`otp-digit-${digitIndex}`);
+  const nextInput = document.getElementById(`otp-digit-${digitIndex + 1}`);
+  const prevInput = document.getElementById(`otp-digit-${digitIndex - 1}`);
+
+  if (event.key === 'Backspace') {
+    if (currentInput.value === '' && prevInput) {
+      prevInput.focus();
+    }
+  } else if (currentInput.value.length === 1 && nextInput) {
+    nextInput.focus();
+  }
+}
+
+function autoFillPassengerOtp() {
+  document.getElementById('otp-digit-1').value = '7';
+  document.getElementById('otp-digit-2').value = '8';
+  document.getElementById('otp-digit-3').value = '4';
+  document.getElementById('otp-digit-4').value = '2';
 }
 
 function hostVerifyOtpAndStartRide() {
@@ -621,7 +800,6 @@ function hostVerifyOtpAndStartRide() {
   const enteredOtp = `${d1}${d2}${d3}${d4}`;
 
   if (enteredOtp === '7842') {
-    // Transition to Host Active In-Trip HUD
     navigateTo('sheet-host-in-trip');
     startHostInTripHUD();
   } else {
@@ -688,7 +866,7 @@ function cancelHostPickup() {
 }
 
 // ========================================================
-// 5. COMPLETE HOST FLOW B: CITY TO CITY (HIGHWAY)
+// 6. COMPLETE HOST FLOW B: CITY TO CITY (HIGHWAY)
 // ========================================================
 
 function startHostCityToCityFlow() {
@@ -731,7 +909,80 @@ function acceptHighwayPassenger() {
 }
 
 // ========================================================
-// 6. IN-APP CHAT SIMULATOR
+// 7. LOCATION SUGGESTIONS & AUTOCOMPLETE
+// ========================================================
+
+function showLocationSuggestions(targetInputId) {
+  const listContainer = document.getElementById('passenger-suggestions-list');
+  if (!listContainer) return;
+
+  listContainer.innerHTML = '';
+  POPULAR_LOCATIONS.forEach(loc => {
+    const item = document.createElement('div');
+    item.className = 'suggestion-item';
+    item.onclick = () => selectLocationSuggestion(loc, targetInputId);
+    item.innerHTML = `
+      <span class="sugg-icon">${loc.icon}</span>
+      <div class="sugg-info">
+        <span class="sugg-title">${loc.name}</span>
+        <span class="sugg-sub">${loc.sub}</span>
+      </div>
+      <span class="sugg-dist-tag">${loc.type === 'highway' ? 'Highway' : 'City'}</span>
+    `;
+    listContainer.appendChild(item);
+  });
+}
+
+function filterLocationSuggestions(query, targetInputId) {
+  const listContainer = document.getElementById('passenger-suggestions-list');
+  if (!listContainer) return;
+
+  const filtered = POPULAR_LOCATIONS.filter(loc => 
+    loc.name.toLowerCase().includes(query.toLowerCase()) || 
+    loc.sub.toLowerCase().includes(query.toLowerCase())
+  );
+
+  listContainer.innerHTML = '';
+  filtered.forEach(loc => {
+    const item = document.createElement('div');
+    item.className = 'suggestion-item';
+    item.onclick = () => selectLocationSuggestion(loc, targetInputId);
+    item.innerHTML = `
+      <span class="sugg-icon">${loc.icon}</span>
+      <div class="sugg-info">
+        <span class="sugg-title">${loc.name}</span>
+        <span class="sugg-sub">${loc.sub}</span>
+      </div>
+      <span class="sugg-dist-tag">${loc.type === 'highway' ? 'Highway' : 'City'}</span>
+    `;
+    listContainer.appendChild(item);
+  });
+}
+
+function selectLocationSuggestion(loc, targetInputId) {
+  if (targetInputId === 'passenger-pickup') {
+    document.getElementById('passenger-pickup-input').value = loc.name;
+    defaultPickup = loc.coords;
+  } else if (targetInputId === 'passenger-drop') {
+    document.getElementById('passenger-drop-input').value = loc.name;
+    defaultDrop = loc.coords;
+    currentDistKm = loc.distFromDefault > 0 ? loc.distFromDefault : 8.2;
+    if (loc.type === 'highway') {
+      setPassengerRouteType('highway');
+    } else {
+      setPassengerRouteType('city');
+    }
+  } else if (targetInputId === 'host-origin') {
+    document.getElementById('host-city-origin').value = loc.name;
+  } else if (targetInputId === 'host-dest') {
+    document.getElementById('host-city-dest').value = loc.name;
+  }
+
+  drawRoute(defaultPickup, defaultDrop);
+}
+
+// ========================================================
+// 8. IN-APP CHAT & LIVE CALLING SIMULATOR
 // ========================================================
 
 function openChatModal() {
@@ -777,8 +1028,50 @@ function handleChatEnter(e) {
   }
 }
 
+// IN-APP CALL SIMULATOR
+function triggerCallingModal(contactName, contactSub) {
+  document.getElementById('call-contact-name').innerText = contactName;
+  document.getElementById('call-contact-sub').innerText = contactSub;
+  document.getElementById('call-avatar-text').innerText = contactName.split(' ').map(n => n[0]).join('');
+  document.getElementById('modal-call-screen').style.display = 'flex';
+
+  const statusEl = document.getElementById('call-status-timer');
+  statusEl.innerText = "Ringing...";
+  statusEl.style.color = "#F59E0B";
+
+  callLiveSeconds = 0;
+  if (callTimerInterval) clearInterval(callTimerInterval);
+
+  setTimeout(() => {
+    statusEl.style.color = "#34D399";
+    callTimerInterval = setInterval(() => {
+      callLiveSeconds++;
+      const m = String(Math.floor(callLiveSeconds / 60)).padStart(2, '0');
+      const s = String(callLiveSeconds % 60).padStart(2, '0');
+      statusEl.innerText = `Connected (${m}:${s})`;
+    }, 1000);
+  }, 1800);
+}
+
+function endInAppCall() {
+  if (callTimerInterval) clearInterval(callTimerInterval);
+  document.getElementById('modal-call-screen').style.display = 'none';
+}
+
+function toggleCallMute(btn) {
+  btn.classList.toggle('active');
+  const lbl = btn.querySelector('.ctrl-lbl');
+  lbl.innerText = btn.classList.contains('active') ? 'Muted' : 'Mute';
+}
+
+function toggleCallSpeaker(btn) {
+  btn.classList.toggle('active');
+  const lbl = btn.querySelector('.ctrl-lbl');
+  lbl.innerText = btn.classList.contains('active') ? 'Speaker ON' : 'Speaker';
+}
+
 // ========================================================
-// 7. FARE BREAKDOWN MODAL
+// 9. FARE BREAKDOWN MODAL
 // ========================================================
 
 function openFareBreakdown(event) {
@@ -801,7 +1094,7 @@ function closeFareBreakdown() {
 }
 
 // ========================================================
-// 8. HOST PROFILE & REVIEWS MODAL
+// 10. HOST PROFILE & REVIEWS MODAL
 // ========================================================
 
 function openHostReviewsModal(name, rating, count, bike, badge, event) {
@@ -821,7 +1114,7 @@ function closeHostReviewsModal() {
 }
 
 // ========================================================
-// 9. PAYMENTS & OFFERS MODALS
+// 11. PAYMENTS & OFFERS MODALS
 // ========================================================
 
 function openPaymentModal() {
@@ -870,9 +1163,9 @@ function openTripDetails() {
 }
 
 function openProfileDrawer() {
-  alert("Rapido Profile:\n\nUser: Abhigya\nRating: ⭐ 4.9 (Trusted Commuter)\nCorporate Email: Verified ✅ (@infosys.com)\nDigiLocker Govt ID: Verified ✅");
+  alert(`Rapido Profile:\n\nUser: Abhigya\nHost Status: ${hostIsOnboarded ? 'Registered Host ✅' : 'Passenger'}\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\nDigiLocker Govt ID: Verified ✅`);
 }
 
-function openLocationPicker() {
-  alert("Current Location set to: Sector R, Mahalaxmi Nagar, Indore");
+function openLocationPickerModal() {
+  alert("Current Location set to: Sector R, Mahalaxmi Nagar, Indore (MP)");
 }

@@ -26,7 +26,7 @@
         <button class="user-avatar-btn" onclick="openProfileDrawer()" title="Profile">
           <span class="avatar-letter">A</span>
         </button>
-        <div class="user-location-selector" onclick="openLocationPicker()">
+        <div class="user-location-selector" onclick="openLocationPickerModal()">
           <span class="location-label">YOUR LOCATION</span>
           <div class="location-name-row">
             <span class="current-loc-name" id="top-loc-name">Mahalaxmi Nagar, Indore</span>
@@ -99,7 +99,7 @@
           </div>
 
           <!-- OPTION 2: HOST A RIDE (TWO-WHEELER OWNER) -->
-          <div class="pool-action-card host-card" onclick="openHostModeSelector()">
+          <div class="pool-action-card host-card" onclick="openHostFlow()">
             <div class="card-tag tag-yellow">Have a Bike</div>
             <div class="card-icon-box">🏍️</div>
             <h3 class="card-heading">Host a Ride</h3>
@@ -139,7 +139,7 @@
 
       <!-- RECENT COMMUTE SHORTCUTS (City vs Highway Demonstration) -->
       <div class="recent-commutes-stack">
-        <div class="recent-row" onclick="quickSelectRoute('Indore City Commute', '722, Sector R, Mahalaxmi Nagar', 'Savitri Empire, Scheme 54', 8.2)">
+        <div class="recent-row" onclick="quickSelectRoute('Indore City Commute', '722, Sector R, Mahalaxmi Nagar', 'Savitri Empire, Scheme No 54', 8.2)">
           <div class="recent-icon">🕒</div>
           <div class="recent-info">
             <span class="recent-title">Savitri Empire, Scheme No 54</span>
@@ -159,6 +159,100 @@
     </section>
 
     <!-- ======================================================== -->
+    <!-- 0A. RAPIDO HOST ONBOARDING FLOW (QUICK & FRICTIONLESS)   -->
+    <!-- ======================================================== -->
+    <section class="bottom-sheet" id="sheet-host-onboarding" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="sheet-header-row">
+        <div>
+          <h2 class="sheet-title">Host a Ride Onboarding</h2>
+          <p class="sheet-subtitle">Quick 1-minute setup for two-wheeler owners</p>
+        </div>
+        <span class="badge-tag yellow">Rider Setup</span>
+      </div>
+
+      <div class="onboarding-stepper-row">
+        <div class="step-pill active" id="ob-step-1-pill">1. Vehicle Details</div>
+        <div class="step-line"></div>
+        <div class="step-pill" id="ob-step-2-pill">2. Safety & DL</div>
+      </div>
+
+      <!-- ONBOARDING STEP 1: VEHICLE DETAILS -->
+      <div id="ob-step-1-content">
+        <div class="ob-section-heading">Select Two-Wheeler Type</div>
+        <div class="vehicle-type-selector-grid">
+          <div class="v-type-card active" id="v-type-motorcycle" onclick="selectVehicleType('Motorcycle')">
+            <div class="v-type-icon">🏍️</div>
+            <span class="v-type-label">Motorcycle</span>
+          </div>
+          <div class="v-type-card" id="v-type-scooter" onclick="selectVehicleType('Scooter')">
+            <div class="v-type-icon">🛵</div>
+            <span class="v-type-label">Scooter</span>
+          </div>
+        </div>
+
+        <div class="ob-input-group">
+          <label class="ob-field-label">Vehicle Brand & Model</label>
+          <select id="ob-vehicle-model" class="ob-select-input">
+            <option value="Royal Enfield Hunter 350 (Blue)">Royal Enfield Hunter 350</option>
+            <option value="Royal Enfield Classic 350">Royal Enfield Classic 350</option>
+            <option value="Honda Activa 6G (Grey)">Honda Activa 6G</option>
+            <option value="TVS Jupiter 125 (Blue)">TVS Jupiter 125</option>
+            <option value="Bajaj Pulsar 150 (Black)">Bajaj Pulsar 150</option>
+            <option value="Yamaha FZ-S (Matte)">Yamaha FZ-S V3</option>
+            <option value="Hero Splendor Plus (Black)">Hero Splendor Plus</option>
+            <option value="Ather 450X (EV)">Ather 450X Electric</option>
+          </select>
+        </div>
+
+        <div class="ob-input-group">
+          <label class="ob-field-label">Vehicle Registration Number</label>
+          <input type="text" id="ob-plate-number" class="ob-text-input uppercase" value="MP 09 AB 7842" placeholder="e.g. MP 09 AB 1234">
+        </div>
+
+        <button class="rapido-primary-btn" style="margin-top:14px;" onclick="goToOnboardingStep(2)">
+          Next: Safety & Verification ➔
+        </button>
+      </div>
+
+      <!-- ONBOARDING STEP 2: SAFETY & DIGILOCKER VERIFICATION -->
+      <div id="ob-step-2-content" style="display:none;">
+        <div class="digilocker-badge-banner">
+          <div class="dl-badge-icon">🆔</div>
+          <div class="dl-badge-text">
+            <strong>DigiLocker DL Verification</strong>
+            <p>Driving License auto-linked: <span class="mono-code">DL-092021008742</span></p>
+          </div>
+          <span class="verified-green-check">✓ Verified</span>
+        </div>
+
+        <div class="safety-declaration-box">
+          <div class="ob-section-heading" style="margin-bottom:8px;">Safety & Gear Declaration</div>
+          
+          <label class="pref-checkbox-row">
+            <input type="checkbox" id="ob-chk-helmet" checked>
+            <span>I have a spare ISI-approved helmet for the co-rider 🪖</span>
+          </label>
+
+          <label class="pref-checkbox-row">
+            <input type="checkbox" id="ob-chk-rules" checked>
+            <span>I agree to safe commuting speeds and zero-detour corridor pickups</span>
+          </label>
+        </div>
+
+        <div class="action-btn-stack" style="margin-top:16px;">
+          <button class="rapido-primary-btn" onclick="completeHostOnboarding()">
+            🎉 Complete Setup & Start Hosting
+          </button>
+          <button class="rapido-secondary-outline-btn" onclick="goToOnboardingStep(1)">
+            Back to Vehicle Details
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
     <!-- 0B. HOST MODE SELECTOR (INSIDE CITY vs HIGHWAY)          -->
     <!-- ======================================================== -->
     <section class="bottom-sheet" id="sheet-host-mode-picker" style="display:none;">
@@ -167,7 +261,7 @@
       <div class="sheet-header-row">
         <div>
           <h2 class="sheet-title">How do you want to host?</h2>
-          <p class="sheet-subtitle">Choose your travel type to offer your empty seat</p>
+          <p class="sheet-subtitle" id="host-picker-vehicle-summary">Hosting with Royal Enfield Hunter 350 (MP 09 AB 7842)</p>
         </div>
       </div>
 
@@ -243,12 +337,12 @@
       <div class="route-input-stack">
         <div class="route-input-group">
           <span class="route-dot green-dot"></span>
-          <input type="text" id="passenger-pickup-input" class="route-field" value="722, Sector R, Mahalaxmi Nagar, Indore" placeholder="Enter Pickup Location">
+          <input type="text" id="passenger-pickup-input" class="route-field" value="722, Sector R, Mahalaxmi Nagar, Indore" placeholder="Enter Pickup Location" onfocus="showLocationSuggestions('passenger-pickup')" oninput="filterLocationSuggestions(this.value, 'passenger-pickup')">
         </div>
         <div class="route-connector-line"></div>
         <div class="route-input-group">
           <span class="route-dot red-dot"></span>
-          <input type="text" id="passenger-drop-input" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Enter Destination (City or Other City)">
+          <input type="text" id="passenger-drop-input" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Enter Destination (City or Other City)" onfocus="showLocationSuggestions('passenger-drop')" oninput="filterLocationSuggestions(this.value, 'passenger-drop')">
         </div>
       </div>
 
@@ -256,6 +350,14 @@
       <div class="route-quick-switch-pills">
         <button class="switch-pill active" onclick="setPassengerRouteType('city')">📍 Inside City (8.2 km)</button>
         <button class="switch-pill" onclick="setPassengerRouteType('highway')">🛣️ Highway (195 km)</button>
+      </div>
+
+      <!-- Interactive Popular Landmarks / Suggestion Dropdown -->
+      <div class="location-suggestions-container" id="passenger-location-suggestions">
+        <div class="suggestion-header-label">POPULAR CORRIDORS & HUBS</div>
+        <div class="suggestions-list" id="passenger-suggestions-list">
+          <!-- Populated dynamically by app.js -->
+        </div>
       </div>
 
       <button class="rapido-primary-btn" onclick="goToPassengerPickupCheck()">
@@ -363,7 +465,7 @@
       <!-- Quick Communication Buttons with Host -->
       <div class="comm-actions-row" id="waiting-comm-actions" style="display:none;">
         <button class="comm-btn" onclick="openChatModal()">💬 Chat with Host</button>
-        <button class="comm-btn" onclick="alert('Calling Host Rahul Sharma...')">📞 Call Host</button>
+        <button class="comm-btn" onclick="triggerCallingModal('Rahul Sharma', 'Host · Royal Enfield Hunter 350')">📞 Call Host</button>
       </div>
 
       <div class="action-btn-stack" id="waiting-action-buttons">
@@ -398,7 +500,7 @@
         </div>
         <div class="driver-actions-right">
           <button class="icon-round-btn" onclick="openChatModal()" title="Chat">💬</button>
-          <button class="icon-round-btn" onclick="alert('Calling Host...')" title="Call">📞</button>
+          <button class="icon-round-btn" onclick="triggerCallingModal('Rahul Sharma', 'Host · Royal Enfield Hunter 350')" title="Call">📞</button>
         </div>
       </div>
 
@@ -503,12 +605,12 @@
       <div class="route-input-stack">
         <div class="route-input-group">
           <span class="route-dot green-dot"></span>
-          <input type="text" id="host-city-origin" class="route-field" value="722, Sector R, Mahalaxmi Nagar, Indore" placeholder="Starting Point">
+          <input type="text" id="host-city-origin" class="route-field" value="722, Sector R, Mahalaxmi Nagar, Indore" placeholder="Starting Point" onfocus="showLocationSuggestions('host-origin')">
         </div>
         <div class="route-connector-line"></div>
         <div class="route-input-group">
           <span class="route-dot red-dot"></span>
-          <input type="text" id="host-city-dest" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Office / Destination">
+          <input type="text" id="host-city-dest" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Office / Destination" onfocus="showLocationSuggestions('host-dest')">
         </div>
       </div>
 
@@ -598,7 +700,7 @@
       </div>
     </section>
 
-    <!-- Step 2C: NEW - Host Navigation to Passenger Pickup Point -->
+    <!-- Step 2C: Host Navigation to Passenger Pickup Point -->
     <section class="bottom-sheet" id="sheet-host-pickup-nav" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
@@ -620,7 +722,7 @@
 
       <div class="host-comm-row">
         <button class="comm-btn" onclick="openChatModal()">💬 Chat with Ananya</button>
-        <button class="comm-btn" onclick="alert('Calling Ananya K. (Masked Number)...')">📞 Call Passenger</button>
+        <button class="comm-btn" onclick="triggerCallingModal('Ananya K.', 'Passenger · Vijay Nagar Bus Stop')">📞 Call Passenger</button>
       </div>
 
       <div class="action-btn-stack" style="margin-top:12px;">
@@ -633,7 +735,7 @@
       </div>
     </section>
 
-    <!-- Step 2D: NEW - Host Asks for Start OTP -->
+    <!-- Step 2D: Host Asks for Start OTP -->
     <section class="bottom-sheet" id="sheet-host-otp-verify" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
@@ -643,16 +745,17 @@
         <p class="sheet-subtitle">Ask Ananya for the 4-digit code shown on her app</p>
       </div>
 
-      <!-- 4-Box PIN Display -->
+      <!-- 4-Box PIN Display with Auto-jump script -->
       <div class="otp-boxes-row">
-        <input type="text" class="otp-digit" id="otp-digit-1" maxlength="1" value="7">
-        <input type="text" class="otp-digit" id="otp-digit-2" maxlength="1" value="8">
-        <input type="text" class="otp-digit" id="otp-digit-3" maxlength="1" value="4">
-        <input type="text" class="otp-digit" id="otp-digit-4" maxlength="1" value="2">
+        <input type="text" class="otp-digit" id="otp-digit-1" maxlength="1" inputmode="numeric" onkeyup="handleOtpKey(1, event)" placeholder="•">
+        <input type="text" class="otp-digit" id="otp-digit-2" maxlength="1" inputmode="numeric" onkeyup="handleOtpKey(2, event)" placeholder="•">
+        <input type="text" class="otp-digit" id="otp-digit-3" maxlength="1" inputmode="numeric" onkeyup="handleOtpKey(3, event)" placeholder="•">
+        <input type="text" class="otp-digit" id="otp-digit-4" maxlength="1" inputmode="numeric" onkeyup="handleOtpKey(4, event)" placeholder="•">
       </div>
 
       <div class="quick-fill-otp-note">
         <span>💡 Hint: Passenger's OTP is <strong>7842</strong></span>
+        <button class="quick-fill-otp-btn" onclick="autoFillPassengerOtp()">⚡ Auto-Fill 7842</button>
       </div>
 
       <div class="action-btn-stack" style="margin-top:14px;">
@@ -662,7 +765,7 @@
       </div>
     </section>
 
-    <!-- Step 2E: NEW - Host Active In-Trip Live Navigation HUD -->
+    <!-- Step 2E: Host Active In-Trip Live Navigation HUD -->
     <section class="bottom-sheet" id="sheet-host-in-trip" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
@@ -712,7 +815,7 @@
       </div>
     </section>
 
-    <!-- Step 2F: NEW - Host Trip Settlement & Rating Screen -->
+    <!-- Step 2F: Host Trip Settlement & Rating Screen -->
     <section class="bottom-sheet" id="sheet-host-completed" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
@@ -836,7 +939,7 @@
       </button>
     </section>
 
-    <!-- Step 3B: NEW - Highway Host Active Trip Dashboard -->
+    <!-- Step 3B: Highway Host Active Trip Dashboard -->
     <section class="bottom-sheet" id="sheet-host-intercity-dashboard" style="display:none;">
       <div class="sheet-drag-handle"></div>
 
@@ -907,8 +1010,8 @@
         <div class="safety-check-item">
           <span class="check-icon">🆔</span>
           <div>
-            <strong>Verified Corporate Commuter</strong>
-            <p>Matched with verified commuter (Corporate Email + DigiLocker ID verified).</p>
+            <strong>Verified Commuter Co-Rider</strong>
+            <p>Matched with verified identity via DigiLocker Govt ID & Phone verification.</p>
           </div>
         </div>
         <div class="safety-check-item">
@@ -957,6 +1060,38 @@
       <div class="chat-input-row">
         <input type="text" id="chat-text-input" placeholder="Type a message..." onkeypress="handleChatEnter(event)">
         <button class="chat-send-btn" onclick="sendChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: LIVE CALL SCREEN SIMULATOR (SAFE DIAL)            -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="modal-call-screen" style="display:none;">
+    <div class="call-dialog-container">
+      <div class="call-dialog-top">
+        <div class="safe-dial-badge">🛡️ Rapido SafeDial · Number Masked</div>
+        <div class="call-avatar-pulse-wrap">
+          <div class="call-avatar-big" id="call-avatar-text">RS</div>
+        </div>
+        <h3 class="call-contact-name" id="call-contact-name">Rahul Sharma</h3>
+        <p class="call-contact-sub" id="call-contact-sub">Host · Royal Enfield Hunter 350</p>
+        <span class="call-status-timer" id="call-status-timer">Ringing...</span>
+      </div>
+
+      <div class="call-controls-row">
+        <button class="call-action-circle-btn" onclick="toggleCallMute(this)" title="Mute">
+          <span class="ctrl-icon">🎙️</span>
+          <span class="ctrl-lbl">Mute</span>
+        </button>
+        <button class="call-action-circle-btn" onclick="toggleCallSpeaker(this)" title="Speaker">
+          <span class="ctrl-icon">🔊</span>
+          <span class="ctrl-lbl">Speaker</span>
+        </button>
+        <button class="call-end-circle-btn" onclick="endInAppCall()" title="End Call">
+          <span class="ctrl-icon">📞</span>
+          <span class="ctrl-lbl">End</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1016,7 +1151,7 @@
         <div class="host-hero-meta">
           <h3 class="host-hero-name" id="modal-host-name">Rahul Sharma</h3>
           <div class="host-hero-rating" id="modal-host-rating">⭐ 4.9 (48 shared rides)</div>
-          <div class="host-hero-badge" id="modal-host-badge">Verified Infosys Commuter</div>
+          <div class="host-hero-badge" id="modal-host-badge">Verified Commuter</div>
         </div>
       </div>
 
@@ -1031,7 +1166,7 @@
         </div>
         <div class="detail-row">
           <span class="detail-lbl">🛡️ Verification:</span>
-          <span class="detail-val">Corporate Email (@infosys.com) + DigiLocker ID</span>
+          <span class="detail-val">DigiLocker Govt ID & Driving License Verified</span>
         </div>
       </div>
 
@@ -1063,7 +1198,7 @@
     </div>
   </div>
 
-  <!-- PAYMENTS MODAL (SCREENSHOT 1) -->
+  <!-- PAYMENTS MODAL -->
   <div class="modal-overlay" id="modal-payments" style="display:none;">
     <div class="modal-sheet">
       <div class="modal-top-bar">
@@ -1144,7 +1279,7 @@
     </div>
   </div>
 
-  <!-- OFFERS MODAL (SCREENSHOT 4) -->
+  <!-- OFFERS MODAL -->
   <div class="modal-overlay" id="modal-offers" style="display:none;">
     <div class="modal-sheet">
       <div class="modal-top-bar">
