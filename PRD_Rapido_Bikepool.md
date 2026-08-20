@@ -2,12 +2,12 @@
 # Rapido RidePool: City Commute & Highway Bike-Sharing
 
 **Product Name:** Rapido RidePool (City Commute & Highway RideShare)  
-**Document Version:** 2.1 (Streamlined Product & User Focus)  
+**Document Version:** 2.2 (Updated to Match Full Live Web App UX)  
 **Author:** Senior Product Manager & UX Lead  
 
 ---
 
-## 1. Product Scope & Value Proposition
+## 1. Product Scope & Core Capabilities
 
 Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-detour peer-to-peer bike sharing platform:
 1. **For Two-Wheeler Owners (Hosts):** Any commuter with a bike can offset their daily fuel expenses by sharing their empty pillion seat along their own destination route.
@@ -15,9 +15,37 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 ---
 
-## 2. Unified Passenger Flow Architecture ("Share a Ride")
+## 2. Interactive Feature Architecture & Components
 
-The passenger experience is consolidated into a single intelligent entry point that automatically detects route distance:
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       INTERACTIVE PRODUCT COMPONENTS                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+  1-Min Host Onboarding ──► Live Location Search ──► 4-Digit Auto OTP Keypad
+  • Bike / Scooter grid     • Landmark presets       • Auto-advance on digit
+  • Plate # & DigiLocker    • Route recalculation    • Backspace handling
+  • Spare Helmet check      • Leaflet polyline       • 1-Tap '7842' shortcut
+```
+
+### A. 1-Minute Frictionless Host Onboarding (`sheet-host-onboarding`)
+* **Step 1 (Vehicle Setup):** User selects vehicle category (🏍️ Motorcycle vs 🛵 Scooter), vehicle brand/model (*Royal Enfield Hunter 350, Honda Activa 6G, Pulsar 150*), and enters registration plate (`MP 09 AB 7842`).
+* **Step 2 (Safety & Verification):** Auto-linked DigiLocker Driving License status (`DL-092021008742`) + Spare ISI Helmet declaration check.
+* **Profile Persistence:** Activated host profile details display dynamically on hosting screens and host profile cards.
+
+### B. Interactive Location Autocomplete & Corridor Engine
+* **Landmark Suggestions Dropdown:** Displays real city & highway hubs (*Mahalaxmi Nagar, Vijay Nagar Square, Scheme 54, Palasia, Bhawarkua, Rajwada, Bhopal ISBT, Ujjain Bypass*).
+* **Dynamic Recalculation:** Selecting any landmark updates distance km, redraws Leaflet map polyline routes with animated bounds, and recalculates fuel fare split.
+
+### C. 4-Digit Auto-Advancing OTP Keypad (`sheet-host-otp-verify`)
+* Input digit boxes automatically advance focus to the next field upon entry and return focus on `Backspace`.
+* Includes a 1-tap **"⚡ Auto-Fill 7842"** button for fast interactive demonstration.
+
+### D. Rapido SafeDial Calling Simulator (`modal-call-screen`)
+* Displays caller avatar, masked number privacy notice (*"Rapido SafeDial · Number Masked"*), ringing tone animation $\to$ live status timer (`00:01`, `00:02`...), working **Mute** and **Speaker** toggles, and End Call control.
+
+---
+
+## 3. Unified Passenger Flow Architecture ("Share a Ride")
 
 * **Step 1 (Route Entry & Auto-Detection):** User enters pickup and destination. Routes ≤30 km automatically activate **Inside City Commute mode**; routes >30 km activate **Highway Intercity mode**.
 * **Step 2 (Pickup Landmark Pin):** Interactive map centers on green `Pickup Point` bubble marker pointing to the nearest direct arterial road bus stop (120m walk).
@@ -27,7 +55,7 @@ The passenger experience is consolidated into a single intelligent entry point t
 
 ---
 
-## 3. Complete 5-Step Host Lifecycle (Inside City: 5–30 km)
+## 4. Complete 5-Step Host Lifecycle (Inside City: 5–30 km)
 
 ```
 ┌────────────────────────────────┐
@@ -75,7 +103,7 @@ The passenger experience is consolidated into a single intelligent entry point t
 
 ---
 
-## 4. Host Flow B: City-to-City Highway (>30 km)
+## 5. Host Flow B: City-to-City Highway (>30 km)
 
 * **Advance Scheduling:** Intercity trips are scheduled **≥1 hour in advance** (e.g., Indore to Bhopal, 195 km).
 * **Dynamic Price Slider:** Host sets seat price bounded by fair fuel guardrails (Min ₹260, Suggested ₹360, Max ₹520).
@@ -84,7 +112,7 @@ The passenger experience is consolidated into a single intelligent entry point t
 
 ---
 
-## 5. Safety, Trust & Compliance Engine
+## 6. Safety, Trust & Compliance Engine
 
 * **Dual ISI Helmet Check:** Pre-ride modal requires host and passenger to confirm sanitized ISI helmet availability.
 * **Commuter Verification:** Identity verification + DigiLocker Govt ID badge displayed on profiles.
@@ -92,11 +120,14 @@ The passenger experience is consolidated into a single intelligent entry point t
 
 ---
 
-## 6. Engineering Acceptance Criteria
+## 7. Engineering Acceptance Criteria
 
 | Module | Acceptance Criteria | Status |
 | :--- | :--- | :--- |
+| **Host Onboarding** | Stepper collects vehicle type, model, plate #, verifies DL via DigiLocker, and activates profile. | **✓ Verified & Live** |
+| **Location Autocomplete** | Selecting landmark updates distance, redraws polyline, and recalculates fare math. | **✓ Verified & Live** |
 | **Unified Distance Engine** | Auto-switches to City Pool (≤30km) or Highway (>30km) upon destination change. | **✓ Verified & Live** |
 | **5-Min Host Radar** | Accurate countdown timer with zero-penalty cancellation if no match occurs. | **✓ Verified & Live** |
-| **OTP Handshake** | Trip start locked until host enters matching 4-digit passenger OTP (`7842`). | **✓ Verified & Live** |
+| **OTP Keypad** | Auto-advances focus on digit press; 1-tap `7842` shortcut verifies ride start. | **✓ Verified & Live** |
+| **SafeDial Calling Simulator** | Displays masked number calling modal with status timer, mute, speaker, and end call controls. | **✓ Verified & Live** |
 | **Responsive Layout** | Auto-scales to 100% full-screen (`100dvh`) on mobile and centers on web browsers. | **✓ Verified & Live** |
