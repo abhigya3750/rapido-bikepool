@@ -385,7 +385,24 @@ function toggleGenderFilter() {
 
 function lockRecurringCommutePass(hostName, event) {
   if (event) event.stopPropagation();
-  alert(`🔁 Mon–Fri Commute Pass Activated!\n\nYou are now paired with ${hostName} for your daily 08:30 AM commute.\n\n✨ Saved 15% extra on weekly fuel split!`);
+
+  const alarmBox = document.getElementById('waiting-daily-alarm-box');
+  if (alarmBox) {
+    alarmBox.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px; flex:1;">
+        <span style="font-size:18px; flex-shrink:0;">⏰</span>
+        <div style="flex:1;">
+          <strong style="font-size:12px; color:#92400E; display:block; line-height:1.2;">09:15 AM Daily Commute Alarm Active</strong>
+          <span style="font-size:10.5px; color:#78350F; display:block; margin-top:2px;">Mon–Fri Commute Partnership with ${hostName} (08:30 AM)</span>
+        </div>
+      </div>
+      <button style="background:#FEF08A; border:1px solid #FDE047; color:#854D0E; font-size:10.5px; font-weight:800; padding:6px 10px; border-radius:8px; cursor:pointer; flex-shrink:0; outline:none;" onclick="alert('📍 Signal Sent to ${hostName}!\n\nHost notified: Passenger Ananya is at Sector R Bus Stop for 08:30 AM commute!')">
+        📍 Signal: At Spot
+      </button>
+    `;
+  }
+
+  alert(`🎉 Mon–Fri Commute Partnership Requested to ${hostName}!\n\nCorridor: Sector R ➔ Scheme 54\nSchedule: Mon–Fri at 08:30 AM\nDaily Fare: ₹${Math.round(currentFare * 0.85)}.00 (15% Commute Discount)\n\nAutomated 09:15 AM departure alarm active!`);
 }
 
 function renderMatchingHostsList() {
