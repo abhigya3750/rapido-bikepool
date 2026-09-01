@@ -705,14 +705,36 @@ function confirmSafetyAndProceedBooking() {
 }
 
 function bookHostRide(hostIndex) {
+  const hostNames = { 1: 'Rahul Sharma', 2: 'Priya Verma' };
+  const matchedName = hostNames[hostIndex] || 'Rahul Sharma';
+  const shortName = matchedName.split(' ')[0];
+
   navigateTo('sheet-passenger-waiting');
-  document.getElementById('waiting-status-title').innerText = "Searching for below services...";
+  document.getElementById('waiting-status-title').innerText = "Searching for matching co-rider...";
   document.getElementById('waiting-progress-bar').style.display = 'block';
   document.getElementById('display-start-otp').style.display = 'none';
   document.getElementById('waiting-comm-actions').style.display = 'none';
 
+  // Reset daily alarm banner to default single-ride unactivated state
+  const alarmBox = document.getElementById('waiting-daily-alarm-box');
+  if (alarmBox) {
+    alarmBox.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:16px;">🔁</span>
+          <strong style="font-size:12px; color:#92400E;">Daily Commute Option</strong>
+        </div>
+        <span style="font-size:10px; font-weight:800; background:#FEF08A; color:#854D0E; padding:2px 6px; border-radius:4px;">Mon–Fri Pass</span>
+      </div>
+      <p style="font-size:11px; color:#78350F; margin:0; line-height:1.3;">${matchedName} commutes along this corridor daily. Partner for daily Mon–Fri commutes & save 15% extra on fuel split!</p>
+      <button style="background:#FEF08A; border:1px solid #FCD34D; color:#854D0E; font-size:11.5px; font-weight:800; padding:8px; border-radius:8px; cursor:pointer; width:100%; text-align:center; outline:none;" onclick="lockRecurringCommutePass('${matchedName}')">
+        🤝 Request Mon–Fri Daily Partnership with ${shortName}
+      </button>
+    `;
+  }
+
   setTimeout(() => {
-    document.getElementById('waiting-status-title').innerText = "Ride Confirmed! Rahul is on the way";
+    document.getElementById('waiting-status-title').innerText = `Ride Confirmed! ${shortName} is on the way`;
     document.getElementById('waiting-progress-bar').style.display = 'none';
     document.getElementById('display-start-otp').style.display = 'block';
     document.getElementById('waiting-comm-actions').style.display = 'flex';

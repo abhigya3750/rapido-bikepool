@@ -418,18 +418,19 @@
         </div>
       </div>
 
+      <!-- Clean Rapido Confirmed Ride Card -->
       <div class="selected-service-card">
-        <div class="service-icon-wrapper">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="#0F172A"><path d="M19 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-7 1.5c-2.3 0-4.3 1.3-5.3 3.2L3.6 8.6A1 1 0 0 0 2.2 10l3.5 3.5c.4.4 1 .4 1.4 0l2.2-2.2c.8-.8 1.9-1.3 3.1-1.3h3.6l1.8 3.6A5 5 0 0 0 15 18a5 5 0 1 0 5-5c-.7 0-1.4.1-2 .4L15.6 9H12zm3 6.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0z"/></svg>
+        <div class="service-icon-wrapper" style="background:#FEF08A; width:44px; height:44px; border-radius:12px; font-size:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          🏍️
         </div>
-        <div class="service-details-mid">
-          <div class="service-name" id="waiting-service-type-name">Bikepool Commute</div>
-          <div class="service-otp" id="display-start-otp" style="display:none;">
-            START OTP: <span class="otp-pill">7842</span>
+        <div class="service-details-mid" style="flex:1; margin-left:12px;">
+          <div class="service-name" id="waiting-service-type-name" style="font-size:14px; font-weight:800; color:#0F172A;">Bikepool Commute</div>
+          <div class="service-otp" id="display-start-otp" style="display:none; margin-top:4px;">
+            <span style="font-size:11px; font-weight:700; color:#64748B;">START OTP:</span> <span class="otp-pill" style="background:#0F172A; color:#FFC400; font-family:'JetBrains Mono',monospace; font-weight:900; font-size:13px; padding:2px 8px; border-radius:6px;">7842</span>
           </div>
         </div>
-        <div class="service-fare-right">
-          <div class="fare-val" id="confirmed-fare-val">₹43</div>
+        <div class="service-fare-right" style="text-align:right;">
+          <div class="fare-val" id="confirmed-fare-val" style="font-size:18px; font-weight:900; color:#0F172A;">₹48</div>
           <button class="trip-details-pill-btn" onclick="openTripDetails()">Trip Details</button>
         </div>
       </div>
@@ -453,7 +454,7 @@
       <div class="fare-payment-summary-row">
         <div class="fare-total-block" onclick="openFareBreakdown(event)">
           <span class="fare-lbl">Total Fuel Split (Tap for breakdown)</span>
-          <span class="fare-num" id="total-fare-num">₹43</span>
+          <span class="fare-num" id="total-fare-num">₹48</span>
         </div>
         <div class="payment-method-badge" onclick="openPaymentModal()">
           <span class="pay-icon">🟡</span>
@@ -462,17 +463,18 @@
         </div>
       </div>
 
-      <!-- Mon-Fri Daily Commute Alarm & Proximity Alert Card -->
-      <div class="daily-alarm-banner" id="waiting-daily-alarm-box" style="display:flex; align-items:center; justify-content:space-between; background:#FFFBEB; border:1px solid #FCD34D; border-radius:12px; padding:10px 12px; margin-bottom:12px; box-sizing:border-box;">
-        <div style="display:flex; align-items:center; gap:8px; flex:1;">
-          <span style="font-size:18px; flex-shrink:0;">⏰</span>
-          <div style="flex:1;">
-            <strong style="font-size:12px; color:#92400E; display:block; line-height:1.2;">09:15 AM Daily Commute Alarm</strong>
-            <span style="font-size:10.5px; color:#78350F; display:block; margin-top:2px; background:transparent;">Mon–Fri 09:30 AM Commute Partnership Active</span>
+      <!-- Mon-Fri Daily Commute Partnership Request Banner (Default for Single Ride) -->
+      <div class="daily-alarm-banner" id="waiting-daily-alarm-box" style="display:flex; flex-direction:column; gap:8px; background:#FFFBEB; border:1.5px solid #FCD34D; border-radius:12px; padding:12px; margin-bottom:12px; box-sizing:border-box;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:16px;">🔁</span>
+            <strong style="font-size:12px; color:#92400E;">Daily Commute Option</strong>
           </div>
+          <span style="font-size:10px; font-weight:800; background:#FEF08A; color:#854D0E; padding:2px 6px; border-radius:4px;">Mon–Fri Pass</span>
         </div>
-        <button style="background:#FEF08A; border:1px solid #FDE047; color:#854D0E; font-size:10.5px; font-weight:800; padding:6px 10px; border-radius:8px; cursor:pointer; flex-shrink:0; outline:none;" onclick="alert('📍 Signal Sent to Host!\n\nRahul notified: \'Passenger Ananya is at Sector R Bus Stop for 09:30 AM commute!\'')">
-          📍 Signal: At Spot
+        <p style="font-size:11px; color:#78350F; margin:0; line-height:1.3;">Rahul commutes along this corridor daily. Partner for daily Mon–Fri commutes & save 15% extra on fuel split!</p>
+        <button style="background:#FEF08A; border:1px solid #FCD34D; color:#854D0E; font-size:11.5px; font-weight:800; padding:8px; border-radius:8px; cursor:pointer; width:100%; text-align:center; outline:none;" onclick="lockRecurringCommutePass('Rahul Sharma')">
+          🤝 Request Mon–Fri Daily Partnership with Rahul
         </button>
       </div>
 
