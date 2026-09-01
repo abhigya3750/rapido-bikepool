@@ -967,14 +967,16 @@
           <span class="bell-icon">🔔</span>
           <strong>1 Co-Traveler Request Received!</strong>
         </div>
-        <div class="pax-matched-card">
-          <div class="pax-avatar" style="background:#8B5CF6;">VJ</div>
-          <div class="pax-details">
-            <div class="pax-name">Vikram Joshi (⭐ 4.9 · Wipro)</div>
-            <div class="pax-sub">Pickup: <strong>Vijay Nagar Bypass Hub</strong> · 1 Backpack</div>
+        <div class="pax-matched-card-v2">
+          <div class="pax-matched-top-row">
+            <div class="pax-avatar" style="background:#8B5CF6; width:36px; height:36px; font-size:13px;">VJ</div>
+            <div class="pax-details-col">
+              <div class="pax-name-title">Vikram Joshi <span class="pax-rating-badge">⭐ 4.9 · Wipro</span></div>
+              <div class="pax-pickup-location">📍 Pickup: <strong>Vijay Nagar Bypass Hub</strong></div>
+            </div>
           </div>
-          <button class="rapido-primary-btn sm-btn" onclick="acceptHighwayPassenger()">
-            Accept Co-Traveler
+          <button class="rapido-primary-btn" style="margin-top:10px; height:42px; font-size:13.5px;" onclick="acceptHighwayPassenger()">
+            Accept Co-Traveler & Confirm Seat
           </button>
         </div>
       </div>
@@ -982,6 +984,52 @@
       <div class="action-btn-stack" style="margin-top:14px;">
         <button class="rapido-secondary-outline-btn" onclick="goHome()">
           Back to Home
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 3C: Highway Host Confirmed Voucher & Navigation Trigger -->
+    <section class="bottom-sheet" id="sheet-host-highway-confirmed" style="display:none;">
+      <div class="sheet-drag-handle"></div>
+
+      <div class="sheet-header-row">
+        <div>
+          <h2 class="sheet-title">Highway Ride Confirmed! 🎉</h2>
+          <p class="sheet-subtitle">Indore ➔ Bhopal · Scheduled Intercity Commute</p>
+        </div>
+        <span class="badge-tag green">Confirmed</span>
+      </div>
+
+      <div class="highway-trip-summary-box">
+        <div class="summary-line">
+          <span>Co-Traveler:</span>
+          <strong id="hw-voucher-pax-name">Vikram Joshi (Wipro · ⭐ 4.9)</strong>
+        </div>
+        <div class="summary-line">
+          <span>Pickup Spot:</span>
+          <strong id="hw-voucher-pickup">Vijay Nagar Bypass Hub</strong>
+        </div>
+        <div class="summary-line">
+          <span>Scheduled Time:</span>
+          <strong>Tomorrow · 07:30 AM</strong>
+        </div>
+        <div class="summary-line">
+          <span>Fuel Split Payout:</span>
+          <strong id="hw-voucher-price" style="color:#059669;">₹360.00</strong>
+        </div>
+      </div>
+
+      <div class="host-comm-row">
+        <button class="comm-btn" onclick="openChatModal()">💬 Chat with Vikram</button>
+        <button class="comm-btn" onclick="triggerCallingModal('Vikram Joshi', 'Co-Traveler · Vijay Nagar Bypass')">📞 Call Co-Traveler</button>
+      </div>
+
+      <div class="action-btn-stack" style="margin-top:12px;">
+        <button class="rapido-primary-btn" onclick="startHighwayHostDepartureNav()">
+          Start Departure Navigation ➔
+        </button>
+        <button class="rapido-secondary-outline-btn" onclick="goHome()">
+          Return to Home
         </button>
       </div>
     </section>

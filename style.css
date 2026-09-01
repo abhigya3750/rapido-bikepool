@@ -1945,16 +1945,21 @@ html, body {
   gap: 6px;
 }
 
-.pax-matched-card {
+.pax-matched-card, .pax-matched-card-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pax-matched-top-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
 }
 
 .pax-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #10B981;
   color: #FFF;
@@ -1962,20 +1967,38 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
-.pax-details {
+.pax-details-col {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.pax-name {
-  font-size: 12.5px;
+.pax-name-title {
+  font-size: 13.5px;
   font-weight: 800;
+  color: var(--rapido-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.pax-sub {
+.pax-rating-badge {
   font-size: 11px;
+  font-weight: 700;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.pax-pickup-location {
+  font-size: 11.5px;
   color: #475569;
 }
 

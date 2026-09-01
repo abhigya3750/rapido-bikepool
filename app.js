@@ -127,9 +127,10 @@ function initMap() {
     attributionControl: false
   }).setView(defaultPickup, 14);
 
-  // CartoDB clean vector tiles
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19
+  // Clean OpenStreetMap standard tiles (Free, high-res, zero watermark)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
   drawRoute(defaultPickup, defaultDrop);
@@ -1014,8 +1015,22 @@ function publishIntercityTrip() {
 }
 
 function acceptHighwayPassenger() {
-  alert("🎉 Co-Traveler Accepted!\n\nPassenger: Vikram Joshi\nPickup: Vijay Nagar Bypass Hub\nScheduled Departure: Tomorrow at 07:30 AM\n\nBooking voucher generated!");
-  goHome();
+  const price = document.getElementById('intercity-price-slider') ? document.getElementById('intercity-price-slider').value : '360';
+  currentFare = parseInt(price, 10);
+  currentDistKm = 195.0;
+  currentRouteType = 'highway';
+
+  // Update Highway Voucher Details
+  document.getElementById('hw-voucher-pax-name').innerText = "Vikram Joshi (Wipro · ⭐ 4.9)";
+  document.getElementById('hw-voucher-pickup').innerText = "Vijay Nagar Bypass Hub, Indore";
+  document.getElementById('hw-voucher-price').innerText = `₹${currentFare}.00`;
+
+  navigateTo('sheet-host-highway-confirmed');
+}
+
+function startHighwayHostDepartureNav() {
+  document.getElementById('host-dist-display').innerText = `${currentDistKm} km`;
+  navigateTo('sheet-host-pickup-nav');
 }
 
 // ========================================================
