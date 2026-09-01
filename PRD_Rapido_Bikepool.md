@@ -2,16 +2,16 @@
 # Rapido RidePool & Highway: P2P Commute Platform
 
 **Product Name:** Rapido RidePool & Highway  
-**Document Version:** 4.0 (Final Master Technical Edition for Rapido Leadership)  
+**Document Version:** 5.0 (Ultimate Technical Edition for Rapido Leadership)  
 **Author:** Abhigya Kanungo  
 
 ---
 
-## 1. Product Scope & Core Capabilities
+## 1. Product Scope & Core Value Proposition
 
 Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-detour peer-to-peer bike sharing platform:
-1. **For Hosts (Offering the Seat):** Any commuter with a two-wheeler (Motorcycle/Scooter) can offset daily fuel expenses by sharing their empty pillion seat along their own destination route.
-2. **For Passengers (Filling the Seat):** Universal Point A-to-B transit (work, college, gym, market) for anyone wanting affordable, direct, surge-free co-rides (₹35–₹45) with a short 100m walk to the main road bus shelter.
+1. **Primary Core Model (Single A-to-B Ride):** Any commuter with a two-wheeler can offer their empty pillion seat for a single trip along their route; any passenger can book a single direct co-ride (₹35–₹45) with a 100m walk to the main road bus shelter.
+2. **Add-on Module (Mon–Fri Commute Partnership):** Optional daily partnership for regular commuters (e.g., 09:30 AM departure) featuring an automated 09:15 AM departure alarm & proximity trigger (*"Passenger at pickup spot 📍"*).
 
 ---
 
@@ -23,25 +23,29 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 └─────────────────────────────────────────────────────────────────────────────┘
   Component / Decision           Technical & Product Rationale
   ────────────────────           ──────────────────────────────
-  1. Rapido In-App Wallet        • Auto-deducts fare from Passenger Wallet and
+  1. Primary A-to-B Core         • Instant 1-click single-trip matching.
+                                 • Passenger walks 100m to main road bus shelter,
+                                   guaranteeing zero detour for Host.
+
+  2. Mon–Fri Partnership Add-on  • Optional daily partnership (e.g. 09:30 AM).
+                                   Automated 09:15 AM alarm & proximity trigger
+                                   ("Passenger at spot 📍") eliminates daily search.
+
+  3. Rapido In-App Wallet        • Auto-deducts fare from Passenger Wallet and
                                    credits Host Wallet instantly upon OTP start.
                                    Eliminates cash hassle; retains 100% platform control.
                                    Also supports Cash & Personal UPI QR modes.
 
-  2. Mon–Fri Commute Alarm       • Optional daily partnership (e.g. 09:30 AM).
-                                   Automated 09:15 AM alarm & proximity trigger
-                                   ("Passenger at spot 📍") eliminates daily search.
-
-  3. Anti-Leakage Psychology     • Micro-Pricing (₹35–₹52/ride) creates social ego
+  4. Anti-Leakage Psychology     • Micro-Pricing (₹35–₹52/ride) creates social ego
                                    barrier against offline bargaining over ₹5.
                                  • Backup SLA Guarantee (free replacement ride if
                                    host cancels) retains passengers on-platform.
 
-  4. 5-30 km City Boundary       • Trips <5 km ➔ Served by regular bike taxi/walking.
+  5. 5-30 km City Boundary       • Trips <5 km ➔ Served by regular bike taxi/walking.
                                  • Trips 5-30 km ➔ High-frequency commute zone
                                    where fuel cost sharing offsets ₹3,500/mo petrol.
 
-  5. Automated Fuel Pricing      • City Fare = ₹15 base + (Dist × ₹3.40/km) + ₹5 safety.
+  6. Automated Fuel Pricing      • City Fare = ₹15 base + (Dist × ₹3.40/km) + ₹5 safety.
                                  • Prevents surge, price gouging & ensures Motor Vehicles
                                    Act compliance (Non-commercial peer fuel recovery).
 ```
@@ -50,25 +54,29 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 ## 3. Interactive Feature Architecture & Components
 
-### A. Rapido In-App Wallet & Payment Flex (`modal-payments`)
+### A. Primary Single A-to-B Ride Flow (`sheet-passenger-search` / `sheet-host-city-setup`)
+* **Rationale:** Core foundation of the platform allowing any two-wheeler owner and passenger to connect for a single direct trip.
+* **Mechanism:** Single-trip landmark search $\to$ 100m bus stop pickup $\to$ host discovery $\to$ 5-min timer $\to$ OTP verification $\to$ trip completion.
+
+### B. Add-On: Mon–Fri Daily Commute Partnership & Proximity Alarm
+* **Rationale:** Daily commuters want a reliable partnership without repeated manual matching.
+* **Mechanism:** Partners once for Mon–Fri 09:30 AM commute. At 09:15 AM, system triggers an automated alarm & proximity notification (*"Passenger Ananya is at Sector R Bus Stop 📍"*).
+
+### C. Add-On: Rapido In-App Wallet & Payment Flex (`modal-payments`)
 * **Rationale:** Direct peer payments create friction and cash change delays.
 * **Mechanism:** 
   - **Rapido Wallet Mode (Primary):** Instant auto-deduction from Passenger Balance (e.g. ₹250.00) $\to$ Instant auto-credit to Host Wallet with zero platform commission.
   - **Flex Modes:** Supports Pay at Drop (UPI QR) and Cash.
 
-### B. Mon–Fri Daily Commute Partnership & Proximity Alarm
-* **Rationale:** Daily commuters want a reliable partnership without repeated manual matching.
-* **Mechanism:** Partners once for Mon–Fri 09:30 AM commute. At 09:15 AM, system triggers an automated alarm & proximity notification (*"Passenger Ananya is at Sector R Bus Stop 📍"*).
-
-### C. 1-Minute Frictionless Host Onboarding (`sheet-host-onboarding`)
+### D. 1-Minute Frictionless Host Onboarding (`sheet-host-onboarding`)
 * **Rationale:** Commercial driver onboarding deters everyday commuters.
 * **Mechanism:** 2-step setup collecting vehicle type (Motorcycle vs Scooter), model, registration plate (`MP 09 AB 7842`), auto DigiLocker DL verification (`DL-092021008742`), and spare ISI helmet declaration.
 
-### D. 4-Digit Auto-Advancing OTP Keypad (`sheet-host-otp-verify`)
+### E. 4-Digit Auto-Advancing OTP Keypad (`sheet-host-otp-verify`)
 * **Rationale:** Prevents wrong boarding and ensures security before trip start.
 * **Mechanism:** Digit boxes auto-advance focus on entry and return on `Backspace`. Includes 1-tap **"⚡ Auto-Fill 7842"** button for fast demonstration.
 
-### E. Rapido SafeDial Calling Simulator (`modal-call-screen`)
+### F. Rapido SafeDial Calling Simulator (`modal-call-screen`)
 * **Rationale:** Preserves passenger and host phone number privacy.
 * **Mechanism:** Overlay displaying caller avatar, masked number badge (*"Rapido SafeDial · Number Masked"*), status timer, Mute & Speaker toggles, and End Call control.
 
@@ -134,8 +142,9 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 | Module | Acceptance Criteria | Status |
 | :--- | :--- | :--- |
+| **Primary Single A-to-B Ride** | Supports 1-click single trip matching for Passenger and Host with zero detour. | **✓ Verified & Live** |
+| **Mon–Fri Commute Alarm Add-on** | Supports 09:15 AM automated departure alarm & proximity alert ("Passenger at spot 📍"). | **✓ Verified & Live** |
 | **Rapido Wallet Engine** | Supports Rapido In-App Wallet balance, auto-deduction, auto-payout, and cash/UPI modes. | **✓ Verified & Live** |
-| **Mon–Fri Commute Alarm** | Supports 09:15 AM automated alarm & proximity alert ("Passenger at spot 📍"). | **✓ Verified & Live** |
 | **Unified Distance Engine** | Auto-switches to City Pool (≤30km) or Highway (>30km) upon destination change. | **✓ Verified & Live** |
 | **Pink Pool Filter (🌸)** | Toggling Pink Pool filters host discovery to verified women commuters with custom badges. | **✓ Verified & Live** |
 | **5-Min Host Radar** | Accurate countdown timer with zero-penalty cancellation if no match occurs. | **✓ Verified & Live** |
