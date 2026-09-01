@@ -1258,6 +1258,20 @@
       <div class="dashed-divider"></div>
 
       <div class="payment-options-container">
+        <!-- Rapido In-App Wallet Option (Primary) -->
+        <div class="pay-option-card active-wallet" onclick="selectPaymentMethod('Rapido Wallet')">
+          <div class="pay-option-main">
+            <div class="pay-brand">
+              <span class="pay-logo-badge" style="background:#FFC400; color:#0F172A; font-weight:900;">🟡 Wallet</span>
+              <div>
+                <span class="pay-name">Rapido Wallet (Auto-Deduct)</span>
+                <div class="pay-subtext" style="color:#059669; font-weight:700;">Balance: ₹250.00 · Instant Auto-Payout</div>
+              </div>
+            </div>
+            <input type="radio" name="pay-method" value="Rapido Wallet" id="radio-rapido-wallet" checked>
+          </div>
+        </div>
+
         <!-- Paytm Option -->
         <div class="pay-option-card" onclick="selectPaymentMethod('Paytm')">
           <div class="pay-option-main">
