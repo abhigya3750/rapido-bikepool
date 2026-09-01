@@ -1,8 +1,8 @@
 # PRODUCT REQUIREMENTS DOCUMENT (PRD)
 # Rapido RidePool: City Commute & Highway Bike-Sharing
 
-**Product Name:** Rapido RidePool (City Commute & Highway RideShare)  
-**Document Version:** 2.3 (Updated with Pink Pool, Recurring Matcher & Clean 2-Persona Architecture)  
+**Product Name:** Rapido RidePool & Highway  
+**Document Version:** 3.0 (Master Technical Rationale & Specifications Edition)  
 **Author:** Abhigya Kanungo  
 
 ---
@@ -15,34 +15,58 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 ---
 
-## 2. Unified 2-Persona Flow Architecture
-
-The passenger and host experiences are consolidated into a single intelligent entry point that automatically detects route distance and commuter preferences:
+## 2. Technical Design Rationale: "THE WHY" Behind Product Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         2-PERSONA FLOW ARCHITECTURE                         │
+│                    TECHNICAL ARCHITECTURE & RATIONALE                       │
 └─────────────────────────────────────────────────────────────────────────────┘
-  Persona A: Filling the Seat ──► Route Entry ──► Auto Distance (City vs Hwy)
-  • Search Destination           • ≤30km: City Pool   • Pink Pool Filter (🌸)
-  • Choose Verified Host         • >30km: Highway     • Mon-Fri Pass Option (🔁)
+  Component / Decision           Technical & Product Rationale
+  ────────────────────           ──────────────────────────────
+  1. Auto-Distance Engine        • Routes ≤30 km auto-activate Inside City mode.
+                                 • Routes >30 km auto-activate Highway Intercity mode.
+                                 • Removes manual mode switching friction for BOTH
+                                   Passengers ("Need a Ride") and Hosts ("Have a Bike").
 
-  Persona B: Offering the Seat ──► Route Entry ──► Auto Distance (City vs Hwy)
-  • 1-Min Host Onboarding        • ≤30km: 5-min Radar • Auto Fuel Fare (₹52)
-  • Vehicle & DigiLocker DL      • >30km: Hwy Slider  • Direct Wallet Settlement
+  2. 5-30 km City Boundary       • Trips <5 km are better served by regular Rapido.
+                                 • Trips 5-30 km represent high-frequency daily commutes
+                                   (Vijay Nagar ➔ Palasia) where fuel cost sharing is vital.
+
+  3. Automated Fuel Pricing      • City Fare = ₹15 base + (Dist × ₹3.40/km) + ₹5 safety.
+                                 • Prevents surge, price gouging & ensures Motor Vehicles
+                                   Act compliance (Non-commercial peer fuel recovery).
+
+  4. Dynamic Highway Slider      • Long-distance intercity (>30 km) varies by bike model,
+                                   tolls & halts. Bounded slider (Min ₹260, Sugg ₹360,
+                                   Max ₹520) allows fair host price flexibility.
+
+  5. Zero-Detour Bus Stops       • Pickup pins snap to main road corridor landmarks (100m
+                                   walk for passenger), preventing host detours into lanes.
 ```
-
-### Key Architectural Capabilities:
-
-* **Auto-Distance Sensing Engine:** Entering a destination automatically detects **Inside City (5–30 km)** vs **Highway (>30 km)** for both Passengers and Hosts.
-* **🌸 Pink Pool Community Engine:** Toggle switch filters hosts to show verified women commuters (*Priya Verma, Ananya K.*) with custom pink trust badges and DigiLocker ID checks.
-* **🔁 Mon–Fri Recurring Commute Pass:** One-tap subscription locking the same verified co-rider every weekday at 08:30 AM with a 15% fuel-split discount.
-* **Direct Landmark Pickups:** Pickup pins snap to nearest arterial road bus stops (100m walk), maintaining a zero-detour guarantee for hosts.
-* **Rapido SafeDial & Telemetry:** Masked VoIP calling simulator, 4-digit start OTP verification (`7842`), live speedometer HUD (38–44 km/h), and bilateral ratings.
 
 ---
 
-## 3. Complete 5-Step Host Lifecycle (Inside City: 5–30 km)
+## 3. Interactive Feature Architecture & Components
+
+### A. 1-Minute Frictionless Host Onboarding (`sheet-host-onboarding`)
+* **Why this flow?** Commercial driver onboarding requires extensive documentation that discourages office commuters. 
+* **Mechanism:** 2-step setup collecting vehicle type (🏍️ Motorcycle vs 🛵 Scooter), model, registration plate (`MP 09 AB 7842`), auto DigiLocker DL verification (`DL-092021008742`), and spare ISI helmet declaration.
+
+### B. Interactive Location Autocomplete & Corridor Engine
+* **Why this flow?** Manual map pinning leads to inaccurate route calculations.
+* **Mechanism:** Dropdown with popular corridors (*Mahalaxmi Nagar, Vijay Nagar, Scheme 54, Palasia, Bhawarkua, Rajwada, Bhopal ISBT, Ujjain Bypass*). Selecting a landmark updates distance km, redraws Leaflet map polyline bounds, and recalculates fuel fare split.
+
+### C. 4-Digit Auto-Advancing OTP Keypad (`sheet-host-otp-verify`)
+* **Why this flow?** Prevents wrong boarding and ensures security before trip start.
+* **Mechanism:** Digit boxes auto-advance focus on entry and return on `Backspace`. Includes a 1-tap **"⚡ Auto-Fill 7842"** button for fast demonstration.
+
+### D. Rapido SafeDial Calling Simulator (`modal-call-screen`)
+* **Why this flow?** Preserves passenger and host phone number privacy.
+* **Mechanism:** Overlay displaying caller avatar, masked number badge (*"Rapido SafeDial · Number Masked"*), status timer (`00:01`, `00:02`...), working **Mute** & **Speaker** toggles, and End Call control.
+
+---
+
+## 4. Complete 5-Step Host Lifecycle (Inside City: 5–30 km)
 
 ```
 ┌────────────────────────────────┐
@@ -90,20 +114,12 @@ The passenger and host experiences are consolidated into a single intelligent en
 
 ---
 
-## 4. Host Flow B: City-to-City Highway (>30 km)
+## 5. Host Flow B: City-to-City Highway (>30 km)
 
-* **Advance Scheduling:** Intercity trips are scheduled $\ge 1\text{ hour}$ in advance.
+* **Advance Scheduling:** Intercity trips are scheduled $\ge 1\text{ hour}$ in advance (Indore to Bhopal, 195 km).
 * **Dynamic Price Slider:** Host sets seat price bounded by fair fuel guardrails (Min ₹260, Suggested ₹360, Max ₹520).
-* **Gear & Halt Checklist:** Host declares spare ISI helmet and planned refreshment halts.
-* **Active Dashboard:** Live listing feed shows co-traveler requests (e.g., *Vikram Joshi*) ➔ Host accepts ➔ travel voucher generated.
-
----
-
-## 5. Safety, Trust & Compliance Engine
-
-* **Dual ISI Helmet Check:** Pre-ride modal requires both parties to confirm sanitized ISI helmet availability.
-* **Commuter Verification:** Identity verification + DigiLocker Govt ID badge displayed on profiles.
-* **Telemetry & SOS:** Live speed monitoring (38–44 km/h) and one-tap emergency SOS connected to response team.
+* **Gear Checklist:** Host declares spare ISI helmet availability.
+* **Confirmed Highway Voucher (`sheet-host-highway-confirmed`):** Displays co-traveler request (e.g. *Vikram Joshi · Wipro*) ➔ Host accepts ➔ Confirmed Voucher generated ➔ Departure Navigation ➔ Start OTP (`7842`) ➔ Highway Live Speedometer HUD ➔ ₹360.00 Settlement & Rating.
 
 ---
 
