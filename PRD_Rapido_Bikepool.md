@@ -2,20 +2,20 @@
 # Rapido RidePool: City Commute & Highway Bike-Sharing
 
 **Product Name:** Rapido RidePool & Highway  
-**Document Version:** 3.0 (Master Technical Rationale & Specifications Edition)  
+**Document Version:** 3.1 (Universal P2P Commute & Platform Retention Edition)  
 **Author:** Abhigya Kanungo  
 
 ---
 
-## 1. Product Scope & Value Proposition
+## 1. Product Scope & Core Value Proposition
 
 Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-detour peer-to-peer bike sharing platform:
-1. **For Hosts (Offering the Seat):** Any commuter with a bike can offset fuel expenses by sharing their empty pillion seat along their own destination route.
-2. **For Passengers (Filling the Seat):** Affordable, direct, surge-free corridor transit with fellow commuters heading in the exact same direction.
+1. **For Hosts (Offering the Seat):** Any commuter with a two-wheeler (Motorcycle/Scooter) can offset daily fuel expenses by sharing their empty pillion seat along their own destination route.
+2. **For Passengers (Filling the Seat):** Universal Point A-to-B transit (work, college, gym, market) for anyone wanting affordable, direct, surge-free co-rides (₹35–₹45) with a short 100m walk to the main road bus shelter.
 
 ---
 
-## 2. Technical Design Rationale: "THE WHY" Behind Product Architecture
+## 2. Technical Architecture & Platform Retention Rationale
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -23,25 +23,26 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 └─────────────────────────────────────────────────────────────────────────────┘
   Component / Decision           Technical & Product Rationale
   ────────────────────           ──────────────────────────────
-  1. Auto-Distance Engine        • Routes ≤30 km auto-activate Inside City mode.
-                                 • Routes >30 km auto-activate Highway Intercity mode.
-                                 • Removes manual mode switching friction for BOTH
-                                   Passengers ("Need a Ride") and Hosts ("Have a Bike").
+  1. Universal Point A-to-B      • Works for any commuter traveling Point A to B.
+                                 • Passenger walks 100m to main road bus shelter,
+                                   guaranteeing zero detour for Host.
 
-  2. 5-30 km City Boundary       • Trips <5 km are better served by regular Rapido.
-                                 • Trips 5-30 km represent high-frequency daily commutes
-                                   (Vijay Nagar ➔ Palasia) where fuel cost sharing is vital.
+  2. Anti-Leakage Psychology     • Micro-Pricing (₹35–₹52/ride) creates social ego
+                                   barrier against offline bargaining over ₹5.
+                                 • Backup SLA Guarantee (free replacement ride if
+                                   host cancels) retains passengers on-platform.
 
-  3. Automated Fuel Pricing      • City Fare = ₹15 base + (Dist × ₹3.40/km) + ₹5 safety.
+  3. 5-30 km City Boundary       • Trips <5 km ➔ Served by regular bike taxi/walking.
+                                 • Trips 5-30 km ➔ High-frequency commute zone
+                                   where fuel cost sharing offsets ₹3,500/mo petrol.
+
+  4. Automated Fuel Pricing      • City Fare = ₹15 base + (Dist × ₹3.40/km) + ₹5 safety.
                                  • Prevents surge, price gouging & ensures Motor Vehicles
                                    Act compliance (Non-commercial peer fuel recovery).
 
-  4. Dynamic Highway Slider      • Long-distance intercity (>30 km) varies by bike model,
+  5. Dynamic Highway Slider      • Long-distance intercity (>30 km) varies by bike model,
                                    tolls & halts. Bounded slider (Min ₹260, Sugg ₹360,
                                    Max ₹520) allows fair host price flexibility.
-
-  5. Zero-Detour Bus Stops       • Pickup pins snap to main road corridor landmarks (100m
-                                   walk for passenger), preventing host detours into lanes.
 ```
 
 ---
@@ -49,19 +50,19 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 ## 3. Interactive Feature Architecture & Components
 
 ### A. 1-Minute Frictionless Host Onboarding (`sheet-host-onboarding`)
-* **Why this flow?** Commercial driver onboarding requires extensive documentation that discourages office commuters. 
+* **Rationale:** Commercial driver onboarding requires extensive documentation that deters everyday commuters.
 * **Mechanism:** 2-step setup collecting vehicle type (🏍️ Motorcycle vs 🛵 Scooter), model, registration plate (`MP 09 AB 7842`), auto DigiLocker DL verification (`DL-092021008742`), and spare ISI helmet declaration.
 
-### B. Interactive Location Autocomplete & Corridor Engine
-* **Why this flow?** Manual map pinning leads to inaccurate route calculations.
+### B. Universal Location Autocomplete & Corridor Engine
+* **Rationale:** Manual map pinning causes inaccurate route calculations and detours.
 * **Mechanism:** Dropdown with popular corridors (*Mahalaxmi Nagar, Vijay Nagar, Scheme 54, Palasia, Bhawarkua, Rajwada, Bhopal ISBT, Ujjain Bypass*). Selecting a landmark updates distance km, redraws Leaflet map polyline bounds, and recalculates fuel fare split.
 
 ### C. 4-Digit Auto-Advancing OTP Keypad (`sheet-host-otp-verify`)
-* **Why this flow?** Prevents wrong boarding and ensures security before trip start.
+* **Rationale:** Prevents wrong boarding and ensures security before trip start.
 * **Mechanism:** Digit boxes auto-advance focus on entry and return on `Backspace`. Includes a 1-tap **"⚡ Auto-Fill 7842"** button for fast demonstration.
 
 ### D. Rapido SafeDial Calling Simulator (`modal-call-screen`)
-* **Why this flow?** Preserves passenger and host phone number privacy.
+* **Rationale:** Preserves passenger and host phone number privacy.
 * **Mechanism:** Overlay displaying caller avatar, masked number badge (*"Rapido SafeDial · Number Masked"*), status timer (`00:01`, `00:02`...), working **Mute** & **Speaker** toggles, and End Call control.
 
 ---
@@ -129,7 +130,7 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 | :--- | :--- | :--- |
 | **Unified Distance Engine** | Auto-switches to City Pool (≤30km) or Highway (>30km) upon destination change. | **✓ Verified & Live** |
 | **Pink Pool Filter (🌸)** | Toggling Pink Pool filters host discovery to verified women commuters with custom badges. | **✓ Verified & Live** |
-| **Recurring Commute Pass (🔁)** | Allows locking Mon–Fri daily commute pass with 15% fuel-split discount. | **✓ Verified & Live** |
+| **Recurring Commute Pass (🔁)** | Allows locking Mon–Fri daily commute pass with 15% fuel-split discount & SLA protection. | **✓ Verified & Live** |
 | **5-Min Host Radar** | Accurate countdown timer with zero-penalty cancellation if no match occurs. | **✓ Verified & Live** |
 | **OTP Handshake** | Trip starts locked until the host enters matching 4-digit passenger OTP (7842). | **✓ Verified & Live** |
 | **Responsive Layout** | Auto-scales to 100% full-screen (100dvh) on mobile and centers on browsers. | **✓ Verified & Live** |
