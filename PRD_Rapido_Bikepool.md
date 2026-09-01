@@ -2,7 +2,7 @@
 # Rapido RidePool & Highway: P2P Commute Platform
 
 **Product Name:** Rapido RidePool & Highway  
-**Document Version:** 5.0 (Ultimate Technical Edition for Rapido Leadership)  
+**Document Version:** 5.1 (Complete 2-Persona Mon–Fri Partnership Edition)  
 **Author:** Abhigya Kanungo  
 
 ---
@@ -11,7 +11,9 @@
 
 Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-detour peer-to-peer bike sharing platform:
 1. **Primary Core Model (Single A-to-B Ride):** Any commuter with a two-wheeler can offer their empty pillion seat for a single trip along their route; any passenger can book a single direct co-ride (₹35–₹45) with a 100m walk to the main road bus shelter.
-2. **Add-on Module (Mon–Fri Commute Partnership):** Optional daily partnership for regular commuters (e.g., 09:30 AM departure) featuring an automated 09:15 AM departure alarm & proximity trigger (*"Passenger at pickup spot 📍"*).
+2. **2-Persona Mon–Fri Commute Partnership:** Available on **BOTH** Passenger ("Need a Ride") and Host ("Host a Ride") modes:
+   - **Passenger Side:** Filter hosts offering Mon–Fri daily commute passes.
+   - **Host Side:** Toggle `[🔁 Mon–Fri Daily Partnership]`, configure daily departure time (09:30 AM), view daily match requests (*Ananya K. · TCS*), and lock a recurring Mon–Fri partnership with automated 09:15 AM departure alarms & proximity alerts (*"Passenger at pickup spot 📍"*).
 
 ---
 
@@ -23,13 +25,13 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 └─────────────────────────────────────────────────────────────────────────────┘
   Component / Decision           Technical & Product Rationale
   ────────────────────           ──────────────────────────────
-  1. Primary A-to-B Core         • Instant 1-click single-trip matching.
+  1. Dual-Persona Mon–Fri Flow   • Available on both Passenger and Host screens.
+                                 • Host configures 09:30 AM schedule, locks match,
+                                   and receives automated 09:15 AM alarm & signal.
+
+  2. Primary A-to-B Core         • Instant 1-click single-trip matching.
                                  • Passenger walks 100m to main road bus shelter,
                                    guaranteeing zero detour for Host.
-
-  2. Mon–Fri Partnership Add-on  • Optional daily partnership (e.g. 09:30 AM).
-                                   Automated 09:15 AM alarm & proximity trigger
-                                   ("Passenger at spot 📍") eliminates daily search.
 
   3. Rapido In-App Wallet        • Auto-deducts fare from Passenger Wallet and
                                    credits Host Wallet instantly upon OTP start.
@@ -54,15 +56,15 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 ## 3. Interactive Feature Architecture & Components
 
-### A. Primary Single A-to-B Ride Flow (`sheet-passenger-search` / `sheet-host-city-setup`)
+### A. Host Mon–Fri Daily Commute Setup (`sheet-host-city-setup`)
+* **Rationale:** Bike hosts commuting daily want a predictable daily co-rider without running the 5-minute radar every morning.
+* **Mechanism:** Switch pill `[🔁 Mon–Fri Daily Partnership]` reveals schedule box $\to$ displays co-rider requests (*Ananya K. · TCS*) $\to$ Host taps **"🤝 Partner Mon–Fri (09:30 AM)"** $\to$ Locks partnership and triggers 09:15 AM daily alarm.
+
+### B. Primary Single A-to-B Ride Flow (`sheet-passenger-search` / `sheet-host-city-setup`)
 * **Rationale:** Core foundation of the platform allowing any two-wheeler owner and passenger to connect for a single direct trip.
 * **Mechanism:** Single-trip landmark search $\to$ 100m bus stop pickup $\to$ host discovery $\to$ 5-min timer $\to$ OTP verification $\to$ trip completion.
 
-### B. Add-On: Mon–Fri Daily Commute Partnership & Proximity Alarm
-* **Rationale:** Daily commuters want a reliable partnership without repeated manual matching.
-* **Mechanism:** Partners once for Mon–Fri 09:30 AM commute. At 09:15 AM, system triggers an automated alarm & proximity notification (*"Passenger Ananya is at Sector R Bus Stop 📍"*).
-
-### C. Add-On: Rapido In-App Wallet & Payment Flex (`modal-payments`)
+### C. Rapido In-App Wallet & Payment Flex (`modal-payments`)
 * **Rationale:** Direct peer payments create friction and cash change delays.
 * **Mechanism:** 
   - **Rapido Wallet Mode (Primary):** Instant auto-deduction from Passenger Balance (e.g. ₹250.00) $\to$ Instant auto-credit to Host Wallet with zero platform commission.
@@ -130,20 +132,12 @@ Rapido RidePool formalizes organic commuter behavior into an intuitive, zero-det
 
 ---
 
-## 5. Host Flow B: City-to-City Highway (>30 km)
-
-* **Advance Scheduling:** Intercity trips are scheduled $\ge 1\text{ hour}$ in advance (Indore to Bhopal, 195 km).
-* **Dynamic Price Slider:** Host sets seat price bounded by fair fuel guardrails (Min ₹260, Suggested ₹360, Max ₹520).
-* **Confirmed Highway Voucher (`sheet-host-highway-confirmed`):** Displays co-traveler request (e.g. *Vikram Joshi · Wipro*) ➔ Host accepts ➔ Confirmed Voucher generated ➔ Departure Navigation ➔ Start OTP (`7842`) ➔ Highway Live Speedometer HUD ➔ ₹360.00 Wallet Settlement & Rating.
-
----
-
-## 6. Engineering Acceptance Criteria
+## 5. Engineering Acceptance Criteria
 
 | Module | Acceptance Criteria | Status |
 | :--- | :--- | :--- |
+| **Host Mon–Fri Setup** | Supports Host Mon–Fri partnership setup, co-rider match preview, and 09:15 AM alarm lock. | **✓ Verified & Live** |
 | **Primary Single A-to-B Ride** | Supports 1-click single trip matching for Passenger and Host with zero detour. | **✓ Verified & Live** |
-| **Mon–Fri Commute Alarm Add-on** | Supports 09:15 AM automated departure alarm & proximity alert ("Passenger at spot 📍"). | **✓ Verified & Live** |
 | **Rapido Wallet Engine** | Supports Rapido In-App Wallet balance, auto-deduction, auto-payout, and cash/UPI modes. | **✓ Verified & Live** |
 | **Unified Distance Engine** | Auto-switches to City Pool (≤30km) or Highway (>30km) upon destination change. | **✓ Verified & Live** |
 | **Pink Pool Filter (🌸)** | Toggling Pink Pool filters host discovery to verified women commuters with custom badges. | **✓ Verified & Live** |

@@ -834,6 +834,22 @@ function calculateHostRouteAndFare() {
   document.getElementById('host-calculated-fare-section').style.display = 'block';
 }
 
+function switchHostMode(mode) {
+  const singleBtn = document.getElementById('host-mode-single-btn');
+  const dailyBtn = document.getElementById('host-mode-daily-btn');
+  const dailySection = document.getElementById('host-daily-schedule-section');
+
+  if (mode === 'daily') {
+    singleBtn.classList.remove('active');
+    dailyBtn.classList.add('active');
+    dailySection.style.display = 'block';
+  } else {
+    dailyBtn.classList.remove('active');
+    singleBtn.classList.add('active');
+    dailySection.style.display = 'none';
+  }
+}
+
 function startHost5MinCountdown() {
   navigateTo('sheet-host-city-timer');
 

@@ -616,6 +616,11 @@
         <span class="badge-tag yellow">5 &ndash; 30 km</span>
       </div>
 
+      <div class="route-quick-switch-pills">
+        <button class="switch-pill active" id="host-mode-single-btn" onclick="switchHostMode('single')">⚡ Single A-to-B Ride</button>
+        <button class="switch-pill" id="host-mode-daily-btn" onclick="switchHostMode('daily')">🔁 Mon–Fri Daily Partnership</button>
+      </div>
+
       <div class="route-input-stack">
         <div class="route-input-group">
           <span class="route-dot green-dot"></span>
@@ -625,6 +630,28 @@
         <div class="route-input-group">
           <span class="route-dot red-dot"></span>
           <input type="text" id="host-city-dest" class="route-field" value="Savitri Empire, Scheme No 54, Indore" placeholder="Office / Destination" onfocus="showLocationSuggestions('host-dest')">
+        </div>
+      </div>
+
+      <!-- Mon-Fri Daily Commute Schedule Box for Host (Hidden by default) -->
+      <div class="daily-commute-host-box" id="host-daily-schedule-section" style="display:none; background:#FFFBEB; border:1.5px solid #FCD34D; border-radius:14px; padding:12px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <strong style="font-size:13px; color:#92400E;">⏰ Mon–Fri Daily Commute Schedule</strong>
+          <span class="badge-tag yellow">09:30 AM Daily</span>
+        </div>
+        <p style="font-size:11px; color:#78350F; margin-bottom:10px;">Partner with a verified commuter along your exact route. Automated 09:15 AM alarm & proximity alerts sent daily!</p>
+        
+        <div class="pax-matched-card-v2" style="background:#FFFFFF; border:1px solid #FDE047; border-radius:10px; padding:10px;">
+          <div class="pax-matched-top-row">
+            <div class="pax-avatar" style="background:#EC4899; width:34px; height:34px; font-size:12px;">AK</div>
+            <div class="pax-details-col">
+              <div class="pax-name-title">Ananya K. <span class="pax-rating-badge">⭐ 4.9 · TCS</span></div>
+              <div class="pax-pickup-location">📍 Sector R Bus Stop ➔ Scheme 54</div>
+            </div>
+          </div>
+          <button class="rapido-primary-btn" style="margin-top:8px; height:38px; font-size:12.5px; background:#FEF08A; color:#854D0E; border:1px solid #FCD34D;" onclick="alert('🎉 Mon–Fri Partnership Locked!\n\nCo-Rider: Ananya K.\nSchedule: Mon–Fri at 09:30 AM\nDaily Payout: ₹52.00 / ride\n\nAutomated 09:15 AM departure alarm active!')">
+            🤝 Partner Mon–Fri (09:30 AM)
+          </button>
         </div>
       </div>
 

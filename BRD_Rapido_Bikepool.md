@@ -2,7 +2,7 @@
 # Rapido RidePool & Highway: P2P Commute Platform
 
 **Product Name:** Rapido RidePool & Highway  
-**Document Version:** 5.0 (Ultimate Comprehensive Edition — All Features & Rationale)  
+**Document Version:** 5.1 (Complete 2-Persona Mon–Fri Partnership Edition)  
 **Author:** Abhigya Kanungo  
 
 ---
@@ -19,14 +19,11 @@ However, they are **NOT commercial taxi drivers**:
 * They reject off-route commercial rides, frequently calling passengers asking *"Bhaiya, kahan jana hai?"*, and only accept a passenger whose destination lies directly along their commute path.
 * By doing this, the bike owner shares their empty pillion seat, reaches their destination on schedule, and collects money to cover **70% to 100% of their daily petrol cost**.
 
-### 1.2 The Core Solution: Primary P2P Sharing + Mon–Fri Partnership Add-on
+### 1.2 The Core Solution: Dual Persona P2P Sharing + Mon–Fri Partnership
 1. **Primary Core Model (Single Point A-to-B Trip):** Instant 1-click booking for anyone needing or offering a single co-ride from Point A to Point B. The passenger walks 100 meters to the main road bus shelter; the host shares their empty pillion seat for a fair fuel split (₹35–₹52).
-2. **Add-on Module (Mon–Fri Commute Partnership):** An optional feature for regular commuters traveling the same route daily (e.g. 09:30 AM). They lock a Mon–Fri partnership once, receiving automated 09:15 AM departure alarms & proximity alerts (*"Passenger at pickup spot 📍"*) with zero daily manual searching.
-
-### 1.3 Platform Unit Economics & Regulatory Protection
-* **Zero Fleet Acquisition Cost:** Unlocks millions of personal two-wheelers already riding on Indian roads.
-* **100% Regulatory Protection:** Non-commercial peer cost recovery (`₹15 base + [Dist × ₹3.40/km] + ₹5 platform fee`) complies fully with Motor Vehicles carpooling guidelines and is 100% immune to surge pricing.
-* **Predictable Monetization:** Steady **₹5.00 platform & safety insurance fee per ride** collected directly via the Rapido In-App Wallet Engine.
+2. **2-Persona Mon–Fri Commute Partnership:** Available on **BOTH** Passenger ("Need a Ride") and Host ("Host a Ride") modes:
+   - **Passenger Side:** Can filter hosts offering Mon–Fri daily commute passes.
+   - **Host Side:** Can toggle `[🔁 Mon–Fri Daily Partnership]`, configure daily departure time (09:30 AM), view daily match requests (*Ananya K. · TCS*), and lock a recurring Mon–Fri partnership with automated 09:15 AM departure alarms & proximity alerts (*"Passenger at pickup spot 📍"*).
 
 ---
 
@@ -35,7 +32,7 @@ However, they are **NOT commercial taxi drivers**:
 | Feature / Parameter | Core vs Add-On | Why It Exists & Problem Solved |
 | :--- | :--- | :--- |
 | **Single Point A-to-B Sharing** | **PRIMARY CORE** | Instant single-trip matching between any Host and Passenger going the same direction. Passenger walks 100m to main road bus shelter for a ₹40 direct co-ride. |
-| **Mon–Fri Commute Partnership** | **ADD-ON FEATURE** | Optional partnership for daily commuters (09:30 AM). Automated 09:15 AM alarm & proximity alert ("Passenger at spot 📍") eliminates daily search. |
+| **Host & Passenger Mon–Fri Partnership** | **ADD-ON FEATURE** | Dual-persona daily partnership (09:30 AM). Automated 09:15 AM alarm & proximity alert ("Passenger at spot 📍") eliminates daily search. |
 | **Rapido In-App Wallet Engine** | **CORE INFRA** | Auto-deducts fare from Passenger Wallet and credits Host Wallet instantly upon OTP start. Also supports Cash & Personal UPI QR modes. |
 | **🌸 Pink Pool (Women Only)** | **ADD-ON FEATURE** | Optional filter matching female commuters exclusively with verified women hosts (*Priya Verma, Ananya K.*) featuring pink trust badges. |
 | **5 km to 30 km City Range** | **CORE GUARDRAIL** | • Under 5 km ➔ Served by regular bike taxi/walking.<br>• 5 to 30 km ➔ Goldilocks commute zone (high petrol burn, high traffic).<br>• Over 30 km ➔ Intercity highway behavior requiring advance scheduling (≥1h) & price sliders. |
@@ -90,8 +87,8 @@ Rapido RidePool prevents offline leakage through **Micro-Pricing Psychology & Sa
 │ • Auto-Detect Distance Engine        │                     │ • 1-Min Onboarding (Bike/Scooter,    │
 │   - Inside City: 5 – 30 km pool      │                     │   Plate #, DigiLocker DL Check)      │
 │   - Highway: > 30 km intercity       │                     │ • Auto-Detect Distance Engine        │
-│ • ADD-ON: 🌸 Pink Pool (Women Only)  │                     │   - Inside City: Auto fuel fare      │
-│ • ADD-ON: 🔁 Mon–Fri Daily Commute   │                     │     + 5-min live hosting timer       │
+│ • ADD-ON: 🌸 Pink Pool (Women Only)  │                     │   - Inside City: Single Ride or      │
+│ • ADD-ON: 🔁 Mon–Fri Daily Commute   │                     │     Mon–Fri Daily Partnership        │
 │   Partnership (09:15 AM Alarm)       │                     │   - Highway: Schedule 1h+ in advance │
 │ • 💳 Rapido Wallet Auto-Deduction    │                     │     + custom price slider            │
 │ • Direct Corridor Landmark Pickup    │                     │ • 💳 Rapido Wallet Instant Payout   │
@@ -106,12 +103,12 @@ Rapido RidePool prevents offline leakage through **Micro-Pricing Psychology & Sa
 ### Persona 1: The Daily Bike Host (Rahul Sharma, 28)
 * **Profile:** Rides a Royal Enfield Hunter 350 from Mahalaxmi Nagar to Scheme 54 (8.2 km).
 * **Pain Point:** Spends ₹3,500/month on petrol; refuses to be a full-time driver or take detours.
-* **RidePool Solution:** Onboards in 1 min, sets route, starts 5-min timer, picks up co-rider at bus shelter, earns ₹52 in his Rapido Wallet, and offsets petrol expenses without changing his routine.
+* **RidePool Solution:** Onboards in 1 min, toggles `Mon–Fri Daily Partnership`, locks 09:30 AM partnership with Ananya K., earns ₹52/ride in his Rapido Wallet, and offsets petrol expenses seamlessly.
 
 ### Persona 2: The Universal Passenger (Ananya K., 24)
 * **Profile:** Daily commuter (8.2 km corridor).
 * **Pain Point:** Auto fares surge to ₹160+; cab cancellations.
-* **RidePool Solution:** Walks 100m to bus shelter, enables **Pink Pool**, matches with verified female host Priya Verma for ₹43, optionally locks a Mon–Fri Pass with 09:15 AM daily alarm, and pays seamlessly via Rapido Wallet.
+* **RidePool Solution:** Walks 100m to bus shelter, enables Pink Pool, matches with verified female host Priya Verma for ₹43, locks a Mon–Fri Pass with 09:15 AM daily alarm, and pays seamlessly via Rapido Wallet.
 
 ### Persona 3: The Highway Co-Traveler (Vikram Joshi, 31)
 * **Profile:** Traveling from Indore to Bhopal (195 km).
