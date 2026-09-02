@@ -1335,12 +1335,53 @@ function applyCoupon() {
   }
 }
 
+let isAdminLoggedIn = false;
+
+function openAdminLoginModal() {
+  document.getElementById('modal-admin-login').style.display = 'flex';
+  document.getElementById('admin-user-input').value = '';
+  document.getElementById('admin-pin-input').value = '';
+}
+
+function closeAdminLoginModal() {
+  document.getElementById('modal-admin-login').style.display = 'none';
+}
+
+function submitAdminLogin() {
+  const user = document.getElementById('admin-user-input').value.trim();
+  const pin = document.getElementById('admin-pin-input').value.trim();
+
+  if (user === 'mota23' && pin === '3750') {
+    isAdminLoggedIn = true;
+    closeAdminLoginModal();
+    
+    // Update avatar letter to AK
+    const avatarEl = document.getElementById('top-avatar-letter');
+    if (avatarEl) avatarEl.innerText = 'AK';
+
+    alert("🎉 Admin Access Granted!\n\nWelcome Abhigya Kanungo (Admin Mode Active)");
+  } else {
+    alert("Invalid Admin Username or Security PIN.");
+  }
+}
+
 function openTripDetails() {
   alert(`Trip Details:\n\nService: ${currentDistKm > 30 ? 'Highway RideShare' : 'Bikepool Commute'}\nFare: ₹${currentFare}\nPickup: 722, Sector R, Mahalaxmi Nagar\nDrop: Savitri Empire, Scheme 54\nInsurance: Covered up to ₹5 Lakh by Rapido Shield`);
 }
 
 function openProfileDrawer() {
-  alert(`Rapido Commuter Profile:\n\nUser: Abhigya Kanungo (Demo Profile)\nStatus: ${hostIsOnboarded ? 'Registered Host ✅' : 'Verified Commuter ✅'}\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\nDigiLocker Govt ID: Verified ✅`);
+  if (isAdminLoggedIn) {
+    if (confirm(`Rapido Admin Profile:\n\nUser: Abhigya Kanungo (Admin)\nStatus: Administrator ✅\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\n\nWould you like to log out of Admin Mode?`)) {
+      isAdminLoggedIn = false;
+      const avatarEl = document.getElementById('top-avatar-letter');
+      if (avatarEl) avatarEl.innerText = 'VC';
+      alert("Logged out of Admin Mode. Switched to Verified Commuter.");
+    }
+  } else {
+    if (confirm(`Rapido Commuter Profile:\n\nUser: Verified Commuter (Public Demo)\nStatus: Verified Commuter ✅\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\n\nWould you like to log in to Admin Mode?`)) {
+      openAdminLoginModal();
+    }
+  }
 }
 
 function openLocationPickerModal() {
