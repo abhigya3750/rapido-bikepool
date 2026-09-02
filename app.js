@@ -1340,7 +1340,7 @@ function openTripDetails() {
 }
 
 function openProfileDrawer() {
-  alert(`Rapido Profile:\n\nUser: Abhigya\nHost Status: ${hostIsOnboarded ? 'Registered Host ✅' : 'Passenger'}\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\nDigiLocker Govt ID: Verified ✅`);
+  alert(`Rapido Commuter Profile:\n\nUser: Abhigya Kanungo (Demo Profile)\nStatus: ${hostIsOnboarded ? 'Registered Host ✅' : 'Verified Commuter ✅'}\nVehicle: ${hostProfile.vehicleModel}\nPlate: ${hostProfile.plateNumber}\nDigiLocker Govt ID: Verified ✅`);
 }
 
 function openLocationPickerModal() {
